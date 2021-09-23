@@ -4,6 +4,7 @@
 *.class
 
 # Log file
+log
 *.log
 out
 # BlueJ files
