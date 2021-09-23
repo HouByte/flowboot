@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>cn.flowboot</groupId>
+    <artifactId>flowboot</artifactId>
+    <packaging>pom</packaging>
+    <version>0.0.1-SNAPSHOT</version>
+    <modules>
+        <module>common</module>
+        <module>core</module>
+        <module>boot</module>
+        <module>system</module>
+        <module>quartz</module>
+        <module>flowable</module>
+        <module>generator</module>
+    </modules>
+
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+        <flowboot.version>${project.version}</flowboot.version>
+    </properties>
+
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- Flow boot 模块 -->
+            <!-- 通用模块 -->
+            <dependency>
+                <groupId>cn.flowboot</groupId>
+                <artifactId>common</artifactId>
+                <version>${flowboot.version}</version>
+            </dependency>
+            <!-- 核心模块 -->
+            <dependency>
+                <groupId>cn.flowboot</groupId>
+                <artifactId>core</artifactId>
+                <version>${flowboot.version}</version>
+            </dependency>
+            <!-- 系统模块 -->
+            <dependency>
+                <groupId>cn.flowboot</groupId>
+                <artifactId>system</artifactId>
+                <version>${flowboot.version}</version>
+            </dependency>
+            <!-- 生成代码模块 -->
+            <dependency>
+                <groupId>cn.flowboot</groupId>
+                <artifactId>generator</artifactId>
+                <version>${flowboot.version}</version>
+            </dependency>
+            <!-- 定时任务模块 -->
+            <dependency>
+                <groupId>cn.flowboot</groupId>
+                <artifactId>quartz</artifactId>
+                <version>${flowboot.version}</version>
+            </dependency>
+            <!-- 工作流模块 -->
+            <dependency>
+                <groupId>cn.flowboot</groupId>
+                <artifactId>flowable</artifactId>
+                <version>${flowboot.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+</project>
