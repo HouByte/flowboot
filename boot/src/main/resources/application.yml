@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8081
 spring:
   application:
     name: flowboot
@@ -29,3 +29,17 @@ spring:
           max-wait: -1ms
           max-idle: 16
           min-idle: 8
+
+flowboot:
+  jwt:
+    #密钥
+    secret: abc123456
+    #令牌过期时间(天）
+    expire: 5
+    #令牌缓存时间(天)
+    cache-expire: 10
+  captchaType: math
+
+logging:
+  level:
+    root: info

@@ -1,4 +1,4 @@
-package cn.flowboot.boot;
+package cn.flowboot;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -10,6 +10,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @author: Vincent Vic
  * @since: 2021/09/23
  */
+
 @SpringBootApplication
 public class FlowbootApplication {
 
