@@ -10,3 +10,7 @@ export function logout() {
 export function getInfo() {
     return ajax.get("/sys/userInfo");
 }
+
+export function getCaptchaImages() {
+    return ajax.get("/captcha");
+}

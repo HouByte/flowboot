@@ -8,13 +8,13 @@ let Result = {
     data:null
 }
 
-Mock.mock('/captcha','get',()=>{
-    Result.data = {
-        token:Random.string(32),
-        captchaImg:Random.dataImage("120x40","p7N5w")
-    }
-    return Result;
-})
+// Mock.mock('/captcha','get',()=>{
+//     Result.data = {
+//         token:Random.string(32),
+//         captchaImg:Random.dataImage("120x40","p7N5w")
+//     }
+//     return Result;
+// })
 
 
 Mock.mock('/login','post',()=>{

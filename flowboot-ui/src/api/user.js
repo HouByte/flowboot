@@ -1,8 +1,6 @@
 import {ajax} from "../ajax";
 
-export function getCaptchaImages() {
-    return ajax.get("/captcha");
-}
+
 
 export function getUserInfo() {
     return ajax.get("/sys/userInfo");
