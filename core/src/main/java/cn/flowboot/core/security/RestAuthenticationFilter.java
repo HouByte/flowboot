@@ -1,5 +1,8 @@
-package cn.flowboot.core.config.security;
+package cn.flowboot.core.security;
 
+import cn.flowboot.common.constant.Constants;
+import cn.flowboot.common.utils.RedisCache;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +29,7 @@ import java.io.InputStream;
 @RequiredArgsConstructor
 public class RestAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final ObjectMapper objectMapper;
-
+    private final RedisCache redisCache;
     /**
      * {
      *     "username":"xxxx"
@@ -46,6 +49,9 @@ public class RestAuthenticationFilter extends UsernamePasswordAuthenticationFilt
             val jsonNode =objectMapper.readTree(is);
             String username = jsonNode.get("username").textValue();
             String password = jsonNode.get("password").textValue();
+            String code = jsonNode.get("code").textValue();
+            String uuid = jsonNode.get("uuid").textValue();
+            validate(code,uuid);
             authRequest = new  UsernamePasswordAuthenticationToken(username,password);
         } catch (IOException e) {
             e.printStackTrace();
@@ -53,5 +59,22 @@ public class RestAuthenticationFilter extends UsernamePasswordAuthenticationFilt
         }
         setDetails(request,authRequest);
         return this.getAuthenticationManager().authenticate(authRequest);
+    }
+
+
+    // 校验验证码逻辑
+    private void validate(String code,String uuid) throws IOException {
+
+
+        if (StringUtils.isBlank(code) || StringUtils.isBlank(uuid)) {
+            throw new BadCredentialsException("验证码错误");
+        }
+        String verifyKey = Constants.CAPTCHA_CODE_KEY + uuid;
+        if (!code.equals(redisCache.getCacheObject(verifyKey))) {
+            throw new BadCredentialsException("验证码错误");
+        }
+
+        // 一次性使用
+        redisCache.deleteObject(verifyKey);
     }
 }

@@ -39,6 +39,13 @@ flowboot:
     expire: 5
     #令牌缓存时间(天)
     cache-expire: 10
+    ignore-filter:
+      - /webjars/**
+      - /favicon.ico
+      - /captcha
+    ignore-auth:
+      - /login
+      - /logout
   captchaType: math
 
 logging:

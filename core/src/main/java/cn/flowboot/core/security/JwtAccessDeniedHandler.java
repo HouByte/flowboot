@@ -1,7 +1,8 @@
-package cn.flowboot.core.config.security;
+package cn.flowboot.core.security;
 
 import cn.flowboot.common.croe.domain.AjaxResult;
 import cn.hutool.json.JSONUtil;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
@@ -25,7 +26,7 @@ public class JwtAccessDeniedHandler implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
         System.out.println("403");
-        response.setContentType("application/json;charset=UTF-8");
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
 
         ServletOutputStream outputStream = response.getOutputStream();

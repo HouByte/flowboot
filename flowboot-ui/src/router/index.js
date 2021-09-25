@@ -16,7 +16,7 @@ import {
 } from "@/api/menu";
 import store from '@/store'
 import {
-  getAccessToken
+  getToken
 } from "@/utils/auth";
 import {
   Message
@@ -97,26 +97,16 @@ const whiteList = ['/login', '/auth-redirect', '/bind', '/register']
 router.beforeEach((to, from, next) => {
   let hasRoute = store.state.menus.hasRoutes
 
-  if (getAccessToken()) {
+  if (getToken()) {
     if (to.path == '/login') {
       next({
         path: '/'
       })
 
     } else {
-      if (store.getters.roles.length === 0) {
+      if (store.getters.permissions.length === 0) {
         // 判断当前用户是否已拉取完user_info信息
-        store.dispatch('GetInfo').then(() => {
-          //generateRoutes();
-        }).catch(err => {
-          // store.dispatch('Logout').then(() => {
-          //   Message.error(err)
-          //   next({
-          //     path: '/login'
-          //   })
-          // })
-          console.log("用户信息获取错误")
-        })
+        //generateRoutes();
       } else {
         next()
       }

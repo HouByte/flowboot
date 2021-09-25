@@ -45,16 +45,13 @@ export default {
   components:{
     SizeMenu,Tabs
   },
-  created() {
-    this.getUserInformation();
-  },
   data(){
 
     return {
       userInfo:{
         id:0,
-        username:"",
-        avatarUrl:""
+        username:this.$store.getters.name,
+        avatar:this.$store.getters.avatar
       }
     }
   },

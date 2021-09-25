@@ -1,5 +1,6 @@
 package cn.flowboot.system.service.impl;
 
+import cn.flowboot.common.croe.domain.user.LoginUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
@@ -35,8 +36,15 @@ public class ConsumerUserDetailsService implements UserDetailsService {
         for (int i = 0; i < 50; i++) {
             authorityList.add(new SimpleGrantedAuthority("sys:user:add"+i));
         }
-
         //TODO 数据库查询用户和权限信息
-        return new User(username, passwordEncoder.encode("123456"), authorityList);
+
+        return LoginUser.builder()
+                .userName("FlowBoot")
+                .avatar("https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png")
+                .password(passwordEncoder.encode("123456"))
+                .delFlag(true)
+                .status(true)
+                .build();
+
     }
 }

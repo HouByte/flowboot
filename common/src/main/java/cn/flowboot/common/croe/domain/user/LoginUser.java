@@ -1,19 +1,33 @@
-package cn.flowboot.system.domain.entity;
+package cn.flowboot.common.croe.domain.user;
 
 import cn.flowboot.common.croe.domain.BaseEntity;
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import java.io.Serializable;
-import java.util.Date;
+import lombok.Builder;
 import lombok.Data;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 
 /**
- * 用户信息表
+ * 用户登入信息
  * @TableName sys_user
  */
-@TableName(value ="sys_user")
 @Data
-public class SysUser extends BaseEntity implements Serializable {
+@Builder
+public class LoginUser implements UserDetails {
+
+    /**
+     * ID
+     */
+    @TableId(type = IdType.AUTO)
+    private Long id;
 
     /**
      * 部门ID
@@ -98,4 +112,36 @@ public class SysUser extends BaseEntity implements Serializable {
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
+
+    private List<GrantedAuthority> grantedAuthorities;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return grantedAuthorities;
+    }
+
+    @Override
+    public String getUsername() {
+        return userName;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return delFlag;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return status;
+    }
 }

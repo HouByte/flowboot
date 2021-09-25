@@ -1,4 +1,4 @@
-package cn.flowboot.core.config.security;
+package cn.flowboot.core.security;
 
 import lombok.val;
 import org.springframework.context.annotation.Bean;

@@ -1,28 +1,44 @@
 import Cookies from 'js-cookie'
 
-const AccessTokenKey = 'Authority-access-token'
-const RefreshTokenKey = 'Authority-refresh-token'
+const TokenKey = 'Authority-token'
+const PermissionsKey = 'Authority-Permissions'
+const UserKey = 'User'
 
-export function getAccessToken() {
-  return Cookies.get(AccessTokenKey)
+export function getToken() {
+  return Cookies.get(TokenKey)
 }
 
-export function setAccessToken(token) {
-  return Cookies.set(AccessTokenKey, token)
+export function setToken(token) {
+  return Cookies.set(TokenKey, token)
 }
 
-export function removeAccessToken() {
-  return Cookies.remove(AccessTokenKey)
+export function removeToken() {
+  return Cookies.remove(TokenKey)
 }
 
-export function getRefreshToken() {
-  return Cookies.get(RefreshTokenKey)
+export function getUser() {
+  let user = Cookies.get(UserKey);
+  console.log(user)
+  return user === undefined ?null:JSON.parse(user)
 }
 
-export function setRefreshToken(token) {
-  return Cookies.set(RefreshTokenKey, token)
+export function setUser(user) {
+  return Cookies.set(UserKey,JSON.stringify(user))
 }
 
-export function removeRefreshToken() {
-  return Cookies.remove(RefreshTokenKey)
+export function removeUser() {
+  return Cookies.remove(UserKey)
+}
+
+export function getPermissions() {
+  let permi = Cookies.get(PermissionsKey);
+  return permi === undefined ? null: JSON.parse()
+}
+
+export function setPermissions(permission) {
+  return Cookies.set(PermissionsKey, JSON.stringify(permission))
+}
+
+export function removePermissions() {
+  return Cookies.remove(PermissionsKey)
 }

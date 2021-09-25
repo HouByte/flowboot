@@ -1,7 +1,6 @@
-package cn.flowboot.core.config.security;
+package cn.flowboot.core.security;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -15,8 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@Builder
-public class Auth {
-    private String accessToken;
-    private String refreshToken;
+public class LoginDto {
+    private String username;
+    private String password;
 }

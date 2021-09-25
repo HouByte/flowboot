@@ -1,7 +1,8 @@
-package cn.flowboot.core.config.security;
+package cn.flowboot.core.security;
 
 import cn.flowboot.common.croe.domain.AjaxResult;
 import cn.hutool.json.JSONUtil;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
@@ -25,7 +26,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         System.out.println("401");
-        response.setContentType("application/json;charset=UTF-8");
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         ServletOutputStream outputStream = response.getOutputStream();
 

@@ -11,12 +11,12 @@
             <result property="nickName" column="nick_name" jdbcType="VARCHAR"/>
             <result property="userType" column="user_type" jdbcType="VARCHAR"/>
             <result property="email" column="email" jdbcType="VARCHAR"/>
-            <result property="phonenumber" column="phonenumber" jdbcType="VARCHAR"/>
+            <result property="phone" column="phone" jdbcType="VARCHAR"/>
             <result property="sex" column="sex" jdbcType="CHAR"/>
             <result property="avatar" column="avatar" jdbcType="VARCHAR"/>
             <result property="password" column="password" jdbcType="VARCHAR"/>
-            <result property="status" column="status" jdbcType="CHAR"/>
-            <result property="delFlag" column="del_flag" jdbcType="CHAR"/>
+            <result property="status" column="status" jdbcType="TINYINT"/>
+            <result property="delFlag" column="del_flag" jdbcType="TINYINT"/>
             <result property="loginIp" column="login_ip" jdbcType="VARCHAR"/>
             <result property="loginDate" column="login_date" jdbcType="TIMESTAMP"/>
             <result property="createBy" column="create_by" jdbcType="VARCHAR"/>

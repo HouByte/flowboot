@@ -23,7 +23,7 @@
               <el-form-item prop="code" style="width: 100%">
                 <el-input v-model.number="loginForm.code" placeholder="请输入验证码" maxlength="5"
                           style="width: 60%;float: left"></el-input>
-                <el-image :src="'data:image/jpg;base64,'+captchaImg" class="code-img"/>
+                <el-image :src="'data:image/jpg;base64,'+captchaImg" @click="getCaptcha" class="code-img"/>
               </el-form-item>
               <el-checkbox v-model="loginForm.rememberMe" style="margin:0px 0px 25px 0px;">记住密码</el-checkbox>
               <el-form-item>
@@ -122,12 +122,15 @@ export default {
             // if (this.captchaOnOff) {
             //
             // }
-
+            console.log(res)
             Message.error(res.data.data)
-            Cookies.remove("username");
-            Cookies.remove("password");
-            this.loginForm.username=''
-            this.loginForm.password=''
+            if (res.data.data !=="验证码错误"){
+              Cookies.remove("username");
+              Cookies.remove("password");
+              this.loginForm.username=''
+              this.loginForm.password=''
+            }
+
             this.loginForm.code=''
             this.getCaptcha();
           });

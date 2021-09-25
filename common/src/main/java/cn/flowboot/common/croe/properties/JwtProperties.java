@@ -4,6 +4,8 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 /**
  * <h1>jwt 配置</h1>
  *
@@ -29,4 +31,6 @@ public class JwtProperties {
     private int expire;
     //令牌缓存时间(天)
     private int cacheExpire;
+    private String[] ignoreFilter;
+    private String[] ignoreAuth;
 }

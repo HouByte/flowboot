@@ -47,11 +47,11 @@ Mock.mock('/sys/user/updatePass','post',()=>{
 })
 
 
-Mock.mock('/logout','post',()=>{
-    Result.code = 200;
-    Result.data = "退出成功"
-    return Result;
-})
+// Mock.mock('/logout','post',()=>{
+//     Result.code = 200;
+//     Result.data = "退出成功"
+//     return Result;
+// })
 
 Mock.mock('/sys/menu/nav','get',()=>{
     Result.data = [

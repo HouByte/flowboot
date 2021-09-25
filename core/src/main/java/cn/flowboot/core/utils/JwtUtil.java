@@ -16,6 +16,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -48,17 +49,15 @@ public class JwtUtil {
     }
     /**
      * 创建token
-     * @param userDetails
+     * @param map
      * @return
      */
-    public String createJwtToken(UserDetails userDetails,Long expireTime,Key key){
+    public String createJwtToken(Map<String,Object> map, Long expireTime, Key key){
         val now = System.currentTimeMillis();
         return Jwts.builder()
                 .setId(jwtProperties.getId())
-                .claim("authorities",userDetails.getAuthorities().stream()
-                                        .map(GrantedAuthority::getAuthority)
-                                        .collect(Collectors.toList()))
-                .setSubject(userDetails.getUsername())
+                .addClaims(map)
+                .setSubject(jwtProperties.getId())
                 .setIssuedAt(new Date(now))//签发时间
                 .setExpiration(new Date(now +expireTime))//60s后过期
                 .signWith(key,SignatureAlgorithm.HS512)//使用HS512加密
@@ -67,20 +66,20 @@ public class JwtUtil {
 
     /**
      * 创建授权token
-     * @param userDetails
+     * @param map
      * @return
      */
-    public String createAccessToken(UserDetails userDetails){
-        return createJwtToken(userDetails,jwtProperties.getAccessTokenExpireTime(),getKey());
+    public String createAccessToken(Map<String,Object> map){
+        return createJwtToken(map,jwtProperties.getAccessTokenExpireTime(),getKey());
     }
 
     /**
      * 创建刷新token
-     * @param userDetails
+     * @param map
      * @return
      */
-    public String createRefreshToken(UserDetails userDetails){
-        return createJwtToken(userDetails,jwtProperties.getRefreshTokenExpireTime(),getRefreshKey());
+    public String createRefreshToken(Map<String,Object> map){
+        return createJwtToken(map,jwtProperties.getRefreshTokenExpireTime(),getRefreshKey());
     }
 
     /**
@@ -118,7 +117,7 @@ public class JwtUtil {
                 .map(claims -> Jwts.builder()
                         .setClaims(claims)
                         .setExpiration(new Date(System.currentTimeMillis() + jwtProperties.getAccessTokenExpireTime()))
-                        .signWith(getKey(), SignatureAlgorithm.HS512).compact())
+                        .signWith(getKey(), signatureAlgorithm).compact())
                 .orElseThrow(()->new AccessDeniedException("访问被拒绝"));
     }
 

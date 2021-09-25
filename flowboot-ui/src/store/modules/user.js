@@ -1,11 +1,10 @@
 import { login, logout, getInfo } from '@/api/login'
-import { getAccessToken, setAccessToken, removeAccessToken,getRefreshToken,setRefreshToken,removeRefreshToken } from '@/utils/auth'
+import {getToken, setToken, removeToken, getPermissions, setPermissions, removePermissions} from '@/utils/auth'
 
 
 const user = {
   state: {
-    token: getAccessToken(),
-    ref_token:getRefreshToken(),
+    token: getToken(),
     name: '',
     avatar: '',
     roles: [],
@@ -13,13 +12,9 @@ const user = {
   },
 
   mutations: {
-    SET_ACCESS_TOKEN: (state, token) => {
+    SET_TOKEN: (state, token) => {
       state.token = token
-      setAccessToken(token)
-    },
-    SET_REFRESH_TOKEN: (state, ref_token) => {
-      state.ref_token = ref_token
-      setRefreshToken(ref_token)
+      setToken(token)
     },
     SET_NAME: (state, name) => {
       state.name = name
@@ -32,23 +27,26 @@ const user = {
     },
     SET_PERMISSIONS: (state, permissions) => {
       state.permissions = permissions
+
+      setPermissions(permissions);
+
     }
   },
 
   actions: {
     // 登录
     Login({ commit }, userInfo) {
-      console.log("login sss")
       const username = userInfo.username.trim()
       const password = userInfo.password
-      const code = userInfo.code
+      const code = userInfo.code+''
       const uuid = userInfo.uuid
       return new Promise((resolve, reject) => {
         login({username, password, code, uuid}).then(res => {
-
-          commit('SET_ACCESS_TOKEN', res.accessToken);
-          commit('SET_REFRESH_TOKEN', res.refreshToken);
           commit('RE_SET_STATE');
+          commit('SET_TOKEN', res.token);
+          commit('SET_PERMISSIONS', res.permissions)
+          commit('SET_AVATAR',res.user.avatar)
+          commit('SET_NAME', res.user.username)
           resolve()
         }).catch(error => {
           reject(error)
@@ -75,7 +73,7 @@ const user = {
           // commit('SET_AVATAR', avatar)
           resolve(res)
         }).catch(error => {
-          console.log("请求用户信息错误")
+          console.log("请求用户信息错误",error)
           reject(error)
         })
       })
@@ -88,8 +86,8 @@ const user = {
           commit('SET_TOKEN', '')
           commit('SET_ROLES', [])
           commit('SET_PERMISSIONS', [])
-          removeAccessToken()
-          removeRefreshToken()
+          removeToken();
+          removePermissions();
           resolve()
         }).catch(error => {
           reject(error)
@@ -101,8 +99,8 @@ const user = {
     FedLogOut({ commit }) {
       return new Promise(resolve => {
         commit('SET_TOKEN', '')
-        removeAccessToken()
-        removeRefreshToken()
+        removeToken();
+        removePermissions();
         resolve()
       })
     }

@@ -1,8 +1,7 @@
-package cn.flowboot.core.config.security;
+package cn.flowboot.core.security;
 
 import cn.flowboot.common.croe.properties.JwtProperties;
 import cn.flowboot.core.utils.CollectionUtil;
-import cn.flowboot.core.utils.JwtUtil;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
