@@ -42,6 +42,7 @@
 import {getCaptchaImages} from "@/api/login";
 import { encrypt, decrypt } from '@/utils/jsencrypt'
 import Cookies from "js-cookie";
+import {Message} from "element-ui";
 export default {
   name: "Login",
 
@@ -70,7 +71,7 @@ export default {
         ],
         username: [
           {required: true, message: '请输入用户名称', trigger: 'blur'},
-          {min: 6, max: 18, message: '长度在 6 到 18 个字符', trigger: 'blur'}
+          {min: 4, max: 18, message: '长度在 4 到 18 个字符', trigger: 'blur'}
         ],
         code: [
           {required: true, message: '请输入验证码', trigger: 'blur'}
@@ -116,12 +117,18 @@ export default {
           }
           this.$store.dispatch("Login", this.loginForm).then(() => {
             this.$router.push({path: this.redirect || "/home"});
-          }).catch(() => {
+          }).catch((res) => {
             this.loading = false;
             // if (this.captchaOnOff) {
             //
             // }
 
+            Message.error(res.data.data)
+            Cookies.remove("username");
+            Cookies.remove("password");
+            this.loginForm.username=''
+            this.loginForm.password=''
+            this.loginForm.code=''
             this.getCaptcha();
           });
         } else {

@@ -8,7 +8,7 @@ export function logout() {
 }
 
 export function getInfo() {
-    return ajax.get("/sys/userInfo");
+    return ajax.get("/sys/user/my");
 }
 
 export function getCaptchaImages() {

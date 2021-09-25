@@ -26,19 +26,19 @@ Mock.mock('/login','post',()=>{
 })
 
 
-Mock.mock('/sys/userInfo','get',()=>{
-    Result.code = 200;
-    Result.data = {
-        user:{
-            id:1,
-            username:"Admin",
-            avatar:"https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
-        },
-        roles:['管理员'],
-        permissions:["sys:user:add","sys:user:list"]
-    }
-    return Result;
-})
+// Mock.mock('/sys/user/info','get',()=>{
+//     Result.code = 200;
+//     Result.data = {
+//         user:{
+//             id:1,
+//             username:"Admin",
+//             avatar:"https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
+//         },
+//         roles:['管理员'],
+//         permissions:["sys:user:add","sys:user:list"]
+//     }
+//     return Result;
+// })
 
 Mock.mock('/sys/user/updatePass','post',()=>{
     Result.code = 200;
@@ -461,24 +461,24 @@ Mock.mock(RegExp('/sys/user/list*'), 'get', () => {
 })
 
 
-Mock.mock(RegExp('/sys/user/*'), 'post', () => {
-    return Result
-})
-
-Mock.mock(RegExp('/sys/user/info/*'), 'get', () => {
-
-    Result.data = {
-        "id": 2,
-        "created": "2021-01-30T08:20:22",
-        "updated": "2021-01-30T08:55:57",
-        "statu": 1,
-        "username": "test",
-        "password": "$2a$10$0ilP4ZD1kLugYwLCs4pmb.ZT9cFqzOZTNaMiHxrBnVIQUGUwEvBIO",
-        "avatar": "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
-        "email": "test@qq.com",
-        "city": null,
-        "lastLogin": null,
-        "roles": []
-    }
-    return Result
-})
+// Mock.mock(RegExp('/sys/user/*'), 'post', () => {
+//     return Result
+// })
+//
+// Mock.mock(RegExp('/sys/user/info/*'), 'get', () => {
+//
+//     Result.data = {
+//         "id": 2,
+//         "created": "2021-01-30T08:20:22",
+//         "updated": "2021-01-30T08:55:57",
+//         "statu": 1,
+//         "username": "test",
+//         "password": "$2a$10$0ilP4ZD1kLugYwLCs4pmb.ZT9cFqzOZTNaMiHxrBnVIQUGUwEvBIO",
+//         "avatar": "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
+//         "email": "test@qq.com",
+//         "city": null,
+//         "lastLogin": null,
+//         "roles": []
+//     }
+//     return Result
+// })

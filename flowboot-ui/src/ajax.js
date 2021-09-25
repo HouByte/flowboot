@@ -2,14 +2,19 @@ import axios from 'axios'
 import qs from 'qs'
 import {Message} from "element-ui";
 import router from "./router";
-import {getToken} from "@/utils/auth";
+import {getAccessToken} from "@/utils/auth";
 
 const TIME_OUT = 30000 // 超时时间30秒
 axios.defaults.baseURL = "/api"
 
 // 请求数据拦截处理
 axios.interceptors.request.use(config => {
-    config.headers['Authorization'] = getToken()
+
+    let token = getAccessToken();
+    if (token){
+        config.headers['Authorization'] = 'Bearer '+token
+    }
+
 
     return config
 }, error => {

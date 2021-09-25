@@ -123,6 +123,8 @@ public class AjaxResult extends HashMap<String, Object>
         return new AjaxResult(HttpStatus.INTERNAL_SERVER_ERROR.value(), msg, data);
     }
 
+
+
     /**
      * 返回错误消息
      *
@@ -132,5 +134,16 @@ public class AjaxResult extends HashMap<String, Object>
      */
     public static AjaxResult error(int code, String msg) {
         return new AjaxResult(code, msg, null);
+    }
+
+    /**
+     * 返回错误消息
+     * @param code 状态码
+     * @param msg 返回内容
+     * @param data  返回内容
+     * @return
+     */
+    public static AjaxResult error(int code,String msg, Object data) {
+        return new AjaxResult(code, msg, data);
     }
 }

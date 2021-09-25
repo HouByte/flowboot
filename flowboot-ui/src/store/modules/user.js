@@ -1,10 +1,11 @@
 import { login, logout, getInfo } from '@/api/login'
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import { getAccessToken, setAccessToken, removeAccessToken,getRefreshToken,setRefreshToken,removeRefreshToken } from '@/utils/auth'
 
 
 const user = {
   state: {
-    token: getToken(),
+    token: getAccessToken(),
+    ref_token:getRefreshToken(),
     name: '',
     avatar: '',
     roles: [],
@@ -12,9 +13,13 @@ const user = {
   },
 
   mutations: {
-    SET_TOKEN: (state, token) => {
+    SET_ACCESS_TOKEN: (state, token) => {
       state.token = token
-      setToken(token)
+      setAccessToken(token)
+    },
+    SET_REFRESH_TOKEN: (state, ref_token) => {
+      state.ref_token = ref_token
+      setRefreshToken(ref_token)
     },
     SET_NAME: (state, name) => {
       state.name = name
@@ -41,7 +46,8 @@ const user = {
       return new Promise((resolve, reject) => {
         login({username, password, code, uuid}).then(res => {
 
-          commit('SET_TOKEN', res.token);
+          commit('SET_ACCESS_TOKEN', res.accessToken);
+          commit('SET_REFRESH_TOKEN', res.refreshToken);
           commit('RE_SET_STATE');
           resolve()
         }).catch(error => {
@@ -54,26 +60,27 @@ const user = {
     GetInfo({ commit, state }) {
       return new Promise((resolve, reject) => {
         getInfo().then(res => {
-          console.log(res)
-          const user = res.user
-          //process.env.VUE_APP_BASE_API
-          const avatar = user.avatar == "" ? require("@/assets/images/profile.jpg") :  user.avatar;
-          console.log(avatar)
-          if (res.roles && res.roles.length > 0) { // 验证返回的roles是否是一个非空数组
-            commit('SET_ROLES', res.roles)
-            commit('SET_PERMISSIONS', res.permissions)
-          } else {
-            commit('SET_ROLES', ['ROLE_DEFAULT'])
-          }
-          commit('SET_NAME', user.username)
-          commit('SET_AVATAR', avatar)
+          console.log("getInfo --- ",res);
+          // const user = res.user
+          //
+          // //process.env.VUE_APP_BASE_API
+          // const avatar = user.avatar == "" ? require("@/assets/images/profile.jpg") :  user.avatar;
+          // if (res.roles && res.roles.length > 0) { // 验证返回的roles是否是一个非空数组
+          //   commit('SET_ROLES', res.roles)
+          //   commit('SET_PERMISSIONS', res.permissions)
+          // } else {
+          //   commit('SET_ROLES', ['ROLE_DEFAULT'])
+          // }
+          // commit('SET_NAME', user.username)
+          // commit('SET_AVATAR', avatar)
           resolve(res)
         }).catch(error => {
+          console.log("请求用户信息错误")
           reject(error)
         })
       })
     },
-    
+
     // 退出系统
     Logout({ commit, state }) {
       return new Promise((resolve, reject) => {
@@ -81,7 +88,8 @@ const user = {
           commit('SET_TOKEN', '')
           commit('SET_ROLES', [])
           commit('SET_PERMISSIONS', [])
-          removeToken()
+          removeAccessToken()
+          removeRefreshToken()
           resolve()
         }).catch(error => {
           reject(error)
@@ -93,7 +101,8 @@ const user = {
     FedLogOut({ commit }) {
       return new Promise(resolve => {
         commit('SET_TOKEN', '')
-        removeToken()
+        removeAccessToken()
+        removeRefreshToken()
         resolve()
       })
     }

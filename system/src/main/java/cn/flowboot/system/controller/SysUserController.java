@@ -22,8 +22,19 @@ public class SysUserController {
     private final SysUserService sysUserService;
 
     @GetMapping("list")
-    public AjaxResult test(){
+    public AjaxResult list(){
         return AjaxResult.success(sysUserService.list());
     }
 
+
+    @GetMapping("my")
+    public AjaxResult info(){
+        System.out.println("info");
+        AjaxResult result = AjaxResult.success();
+        AjaxResult user = AjaxResult.success();
+        user.put("username","admin");
+        result.put("user",user);
+        result.put("permissions","");
+        return AjaxResult.success(result);
+    }
 }

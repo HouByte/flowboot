@@ -33,7 +33,8 @@ spring:
 flowboot:
   jwt:
     #密钥
-    secret: abc123456
+    access-secret: 3BCu6M0P7KDShVvj45wZ9Nbek1dyJs2U8OrIEzgLAiqGcXpYtHGa1CnSHYEouN5sXd9mljB7wM0feIJ3PZAK6bhDt2VzUrFkp8OTSILZPxJVcemdhuoq1kKpaQUTMyrDbHX4s6zi93CBGO7jFRgAwW1Q2ijGovu4M5OpSeRdKFBfIr9VmYakwLUTXtqx7HAPcW0zDEbNU5Vnfb0rtsxMIzKcyB9N4gSYoZvJ6EAHGC8iTQLa3mR1pXu7Fh
+    refresh-secret: 3BCu6M0P7KDShVvj45wZ9Nbek1dyJs2U8OrIEzgLAiqGcXpYtHGa1CnSHYEouN5sXd9mljB7wM0feIJ3PZAK6bhDt2VzUrFkp8OTSILZPxJVcemdhuoq1kKpaQUTMyrDbHX4s6zi93CBGO7jFRgAwW1Q2ijGovu4M5OpSeRdKFBfIr9VmYakwLUTX12x7HAPcW0zDEbNU5Vnfb0rtsxMIzKcyB9N4gSY1ZvJ]2EAHGC8iTQLa3mR1pXu7Fh
     #令牌过期时间(天）
     expire: 5
     #令牌缓存时间(天)
@@ -43,3 +44,4 @@ flowboot:
 logging:
   level:
     root: info
+
