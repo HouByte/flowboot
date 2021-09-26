@@ -5,8 +5,10 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -19,6 +21,8 @@ import java.util.List;
  * 用户登入信息
  * @TableName sys_user
  */
+@NoArgsConstructor
+@AllArgsConstructor
 @Data
 @Builder
 public class LoginUser implements UserDetails {
@@ -132,7 +136,7 @@ public class LoginUser implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return delFlag;
+        return !delFlag;
     }
 
     @Override
@@ -142,6 +146,6 @@ public class LoginUser implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return status;
+        return !status;
     }
 }
