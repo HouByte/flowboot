@@ -30,7 +30,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public AjaxResult getResult(AbstractAuthenticationToken authenticationToken) {
         Collection<GrantedAuthority> authorities = authenticationToken.getAuthorities();
-        System.out.println(authenticationToken);
         LoginUser loginUser = (LoginUser) authenticationToken.getPrincipal();
         LoginSuccess.LoginUserVo loginUserVo = new LoginSuccess.LoginUserVo();
         loginUserVo.setUsername(loginUser.getUsername());
