@@ -39,6 +39,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .token(tokenService.createToken(loginUser))
                 .user(loginUserVo)
                 .permissions(AuthorityUtils.authorityListToSet(authenticationToken.getAuthorities()))
+                .roles(loginUser.getRoles())
                 .build();
         return AjaxResult.success(loginSuccess);
     }

@@ -107,6 +107,18 @@ router.beforeEach((to, from, next) => {
       if (store.getters.permissions.length === 0) {
         // 判断当前用户是否已拉取完user_info信息
         //generateRoutes();
+
+        store.dispatch('GetInfo').then(() => {
+          //generateRoutes();
+        }).catch(err => {
+          console.log(err)
+          // store.dispatch('Logout').then(() => {
+          //   Message.error(err)
+          //   next({
+          //     path: '/login'
+          //   })
+          // })
+        })
       } else {
         next()
       }

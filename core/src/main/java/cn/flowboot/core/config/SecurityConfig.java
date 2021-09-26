@@ -22,6 +22,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsPasswordService;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -69,24 +70,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-//        http.cors(Customizer.withDefaults()).csrf().disable() //关闭跨域
-//                .headers().frameOptions().disable() //放行options请求
-//                .and()
-//                .formLogin(form->form.
-//                        successHandler(getAuthenticationSuccessHandler())
-//                        .failureHandler(getAuthenticationFailureHandler())
-//                        .permitAll()
-//                        )
-//                .sessionManagement()
-//                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//                .and()
-////                .authorizeRequests(auth-> auth.anyRequest().authenticated())
-//                .authorizeRequests(auth -> auth.antMatchers(URL_WHITELIST).permitAll().anyRequest().authenticated());
 
         http.authorizeRequests(req-> req
                 .antMatchers(jwtProperties.getIgnoreAuth()).permitAll()
                 .anyRequest()
                 .authenticated())
+                //关闭session
+                .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 // 异常处理器
                 .exceptionHandling(exc -> exc.authenticationEntryPoint(jwtAuthenticationEntryPoint).accessDeniedHandler(jwtAccessDeniedHandler))
                 // 配置自定义的过滤器

@@ -58,19 +58,24 @@ const user = {
     GetInfo({ commit, state }) {
       return new Promise((resolve, reject) => {
         getInfo().then(res => {
-          console.log("getInfo --- ",res);
-          // const user = res.user
-          //
-          // //process.env.VUE_APP_BASE_API
-          // const avatar = user.avatar == "" ? require("@/assets/images/profile.jpg") :  user.avatar;
-          // if (res.roles && res.roles.length > 0) { // 验证返回的roles是否是一个非空数组
-          //   commit('SET_ROLES', res.roles)
-          //   commit('SET_PERMISSIONS', res.permissions)
-          // } else {
-          //   commit('SET_ROLES', ['ROLE_DEFAULT'])
-          // }
-          // commit('SET_NAME', user.username)
-          // commit('SET_AVATAR', avatar)
+          const user = res.user
+          //process.env.VUE_APP_BASE_API
+          const avatar = user.avatar == "" ? require("@/assets/images/profile.jpg") :  user.avatar;
+          if (res.roles && res.roles.length > 0) { // 验证返回的roles是否是一个非空数组
+            commit('SET_ROLES', res.roles)
+
+          } else {
+            commit('SET_ROLES', ['ROLE_DEFAULT'])
+          }
+
+          if (res.permissions && res.permissions.length > 0) { // 验证返回的roles是否是一个非空数组
+            commit('SET_PERMISSIONS', res.permissions)
+
+          } else {
+            commit('SET_PERMISSIONS', ['PERMISSIONS_DEFAULT'])
+          }
+          commit('SET_NAME', user.username)
+          commit('SET_AVATAR', avatar)
           resolve(res)
         }).catch(error => {
           console.log("请求用户信息错误",error)

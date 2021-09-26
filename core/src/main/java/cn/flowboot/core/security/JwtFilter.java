@@ -2,6 +2,7 @@ package cn.flowboot.core.security;
 
 import cn.flowboot.common.croe.properties.JwtProperties;
 import cn.flowboot.core.utils.CollectionUtil;
+import cn.flowboot.core.utils.JwtUtil;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
@@ -30,15 +31,17 @@ import static java.util.stream.Collectors.toList;
  * @since: 2021/09/05
  */
 @RequiredArgsConstructor
-@Component
+//@Component
 @Order(-1)
 public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtProperties jwtProperties;
+    private final JwtUtil jwtUtil;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         if (checkJwtToken(request)){
+
             validateToken(request)
                     .filter(claims -> {
                         if (claims.get("authorities") != null){
@@ -78,6 +81,7 @@ public class JwtFilter extends OncePerRequestFilter {
      */
     private boolean checkJwtToken(HttpServletRequest request) {
         String authenticationHeader = request.getHeader(jwtProperties.getHeader());
+
         return authenticationHeader != null && authenticationHeader.startsWith(jwtProperties.getPrefix());
     }
 

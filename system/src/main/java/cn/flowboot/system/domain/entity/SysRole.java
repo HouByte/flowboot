@@ -1,20 +1,26 @@
 package cn.flowboot.system.domain.entity;
 
 import cn.flowboot.common.croe.domain.BaseEntity;
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
-
+import java.util.Date;
 import lombok.Data;
 
 /**
  * 角色信息表
- * @author Vincent Vic
  * @TableName sys_role
  */
 @TableName(value ="sys_role")
 @Data
 public class SysRole extends BaseEntity implements Serializable {
+    /**
+     * 角色ID
+     */
+    @TableId(type = IdType.AUTO)
+    private Long roleId;
 
     /**
      * 角色名称
@@ -61,12 +67,20 @@ public class SysRole extends BaseEntity implements Serializable {
      */
     private String createBy;
 
+    /**
+     * 创建时间
+     */
+    private Date createTime;
 
     /**
      * 更新者
      */
     private String updateBy;
 
+    /**
+     * 更新时间
+     */
+    private Date updateTime;
 
     /**
      * 备注

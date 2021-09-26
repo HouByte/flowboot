@@ -5,7 +5,7 @@
 <mapper namespace="cn.flowboot.system.mapper.SysRoleMapper">
 
     <resultMap id="BaseResultMap" type="cn.flowboot.system.domain.entity.SysRole">
-            <id property="id" column="id" jdbcType="BIGINT"/>
+            <id property="roleId" column="role_id" jdbcType="BIGINT"/>
             <result property="roleName" column="role_name" jdbcType="VARCHAR"/>
             <result property="roleKey" column="role_key" jdbcType="VARCHAR"/>
             <result property="roleSort" column="role_sort" jdbcType="INTEGER"/>
@@ -22,10 +22,22 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,role_name,role_key,
+        role_id,role_name,role_key,
         role_sort,data_scope,menu_check_strictly,
         dept_check_strictly,status,del_flag,
         create_by,create_time,update_by,
         update_time,remark
     </sql>
+    <select id="queryRolesByUserId" resultType="java.lang.String" parameterType="java.lang.Long">
+        SELECT
+            sys_role.role_name
+        FROM
+            sys_role
+                LEFT JOIN
+            sys_user_role
+            ON
+                sys_role.role_id = sys_user_role.role_id
+        WHERE
+            sys_user_role.user_id = #{userId}
+    </select>
 </mapper>

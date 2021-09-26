@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.flowboot.system.mapper.SysMenuMapper">
+
+    <resultMap id="BaseResultMap" type="cn.flowboot.system.domain.entity.SysMenu">
+            <id property="menuId" column="menu_id" jdbcType="BIGINT"/>
+            <result property="menuName" column="menu_name" jdbcType="VARCHAR"/>
+            <result property="parentId" column="parent_id" jdbcType="BIGINT"/>
+            <result property="orderNum" column="order_num" jdbcType="INTEGER"/>
+            <result property="path" column="path" jdbcType="VARCHAR"/>
+            <result property="component" column="component" jdbcType="VARCHAR"/>
+            <result property="isFrame" column="is_frame" jdbcType="INTEGER"/>
+            <result property="isCache" column="is_cache" jdbcType="INTEGER"/>
+            <result property="menuType" column="menu_type" jdbcType="CHAR"/>
+            <result property="visible" column="visible" jdbcType="CHAR"/>
+            <result property="status" column="status" jdbcType="CHAR"/>
+            <result property="perms" column="perms" jdbcType="VARCHAR"/>
+            <result property="icon" column="icon" jdbcType="VARCHAR"/>
+            <result property="createBy" column="create_by" jdbcType="VARCHAR"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateBy" column="update_by" jdbcType="VARCHAR"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="remark" column="remark" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        menu_id,menu_name,parent_id,
+        order_num,path,component,
+        is_frame,is_cache,menu_type,
+        visible,status,perms,
+        icon,create_by,create_time,
+        update_by,update_time,remark
+    </sql>
+    <select id="queryPermissionsByUserId" resultType="java.lang.String" parameterType="java.lang.Long">
+        SELECT DISTINCT
+        m.perms
+        FROM
+        sys_user_role AS ur
+        INNER JOIN sys_role_menu AS rm ON ur.role_id = rm.role_id
+        INNER JOIN sys_menu AS m ON m.menu_id = rm.menu_id
+        WHERE
+        ur.user_id = #{userId}
+        AND m.`status` = 0
+        AND m.perms != ''
+    </select>
+</mapper>

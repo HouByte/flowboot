@@ -9,8 +9,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 /**
  * 安全服务工具类
- *
- * @author ruoyi
  */
 public class SecurityUtils
 {
@@ -21,7 +19,7 @@ public class SecurityUtils
     {
         try
         {
-            return getLoginUser().getId();
+            return getLoginUser().getUserId();
         }
         catch (Exception e)
         {

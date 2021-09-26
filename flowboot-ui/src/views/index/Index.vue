@@ -8,10 +8,10 @@
         <span style="font-size: 18px;font-weight: bold">Flow Boot 快速开发流平台</span>
         <div class="header-acatar">
           <el-avatar size="medium"
-                     :src="userInfo.avatar"></el-avatar>
+                     :src="avatar"></el-avatar>
           <el-dropdown>
             <span class="el-dropdown-link">
-              {{ userInfo.username }} <i class="el-icon-arrow-down el-icon--right"></i>
+              {{ username }} <i class="el-icon-arrow-down el-icon--right"></i>
             </span>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item>个人中心</el-dropdown-item>
@@ -45,23 +45,19 @@ export default {
   components:{
     SizeMenu,Tabs
   },
-  data(){
-
-    return {
-      userInfo:{
-        id:0,
-        username:this.$store.getters.name,
-        avatar:this.$store.getters.avatar
+  computed:{
+    username:{
+      get(){
+        return this.$store.getters.name
+      }
+    },
+    avatar:{
+      get(){
+        return this.$store.getters.avatar
       }
     }
   },
   methods:{
-    getUserInformation(){
-      this.$store.dispatch("GetInfo").then((res) => {
-        this.userInfo = res.user;
-        console.log(res)
-      })
-    },
     logout(){
       this.$store.dispatch("Logout").then(() => {
         this.$router.push({ path: "/login" });

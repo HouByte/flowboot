@@ -14,11 +14,6 @@ import java.util.Date;
  */
 @Data
 public class BaseEntity implements Serializable {
-    /**
-     * ID
-     */
-    @TableId(type = IdType.AUTO)
-    private Long id;
 
     /**
      * 创建时间

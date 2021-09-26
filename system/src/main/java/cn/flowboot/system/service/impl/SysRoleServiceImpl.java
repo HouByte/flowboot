@@ -6,6 +6,9 @@ import cn.flowboot.system.service.SysRoleService;
 import cn.flowboot.system.mapper.SysRoleMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Set;
+
 /**
  *
  */
@@ -13,6 +16,10 @@ import org.springframework.stereotype.Service;
 public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRole>
 implements SysRoleService{
 
+    @Override
+    public Set<String> queryRolesByUserId(Long userId) {
+        return getBaseMapper().queryRolesByUserId(userId);
+    }
 }
 
 

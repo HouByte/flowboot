@@ -29,8 +29,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         ServletOutputStream outputStream = response.getOutputStream();
-
-        outputStream.write(JSONUtil.toJsonStr(AjaxResult.success("请登入")).getBytes("UTF-8"));
+        outputStream.write(JSONUtil.toJsonStr(AjaxResult.error("请登入")).getBytes("UTF-8"));
 
         outputStream.flush();
         outputStream.close();

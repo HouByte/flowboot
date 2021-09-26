@@ -16,6 +16,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 用户登入信息
@@ -31,7 +32,7 @@ public class LoginUser implements UserDetails {
      * ID
      */
     @TableId(type = IdType.AUTO)
-    private Long id;
+    private Long userId;
 
     /**
      * 部门ID
@@ -118,6 +119,8 @@ public class LoginUser implements UserDetails {
     private static final long serialVersionUID = 1L;
 
     private List<GrantedAuthority> grantedAuthorities;
+
+    private Set<String> roles;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

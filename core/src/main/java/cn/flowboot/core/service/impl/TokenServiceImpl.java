@@ -63,7 +63,7 @@ public class TokenServiceImpl implements TokenService {
             }
         } catch (Exception e){
             e.printStackTrace();
-            throw new JwtException("token 异常");
+            throw new JwtException(e.getMessage());
         }
 
         //通过jwt中的uuid查询用户信息

@@ -2,6 +2,7 @@ package cn.flowboot.core.aspect;
 
 
 import cn.flowboot.common.croe.domain.AjaxResult;
+import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
@@ -42,6 +43,17 @@ public class GlobalExceptionAdvice {
                                                      BindException ex) {
         log.error("{}  参数校验异常 ==> {}",req,ex);
         AjaxResult response = AjaxResult.error(ex.getBindingResult().getAllErrors().get(0).getDefaultMessage());
+        return response;
+    }
+
+
+    @ResponseBody
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(value = JwtException.class)
+    public AjaxResult handlerJwtException(HttpServletRequest req,
+                                          JwtException ex) {
+        log.error("{}  jwt token 异常 ==> {}",req,ex);
+        AjaxResult response = AjaxResult.error(ex.getMessage());
         return response;
     }
 
