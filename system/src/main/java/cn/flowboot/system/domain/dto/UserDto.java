@@ -1,21 +1,25 @@
-package cn.flowboot.system.domain.entity;
+package cn.flowboot.system.domain.dto;
 
 import cn.flowboot.common.croe.domain.BaseEntity;
+import cn.flowboot.common.croe.domain.SelectOption;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import java.io.Serializable;
-import java.util.Date;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+
 /**
- * 用户信息表
+ * 用户信息编辑类
  * @TableName sys_user
  */
-@TableName(value ="sys_user")
 @Data
-public class SysUser extends BaseEntity implements Serializable {
+public class UserDto implements Serializable {
 
     /**
      * ID
@@ -38,10 +42,7 @@ public class SysUser extends BaseEntity implements Serializable {
      */
     private String nickName;
 
-    /**
-     * 用户类型（00系统用户）
-     */
-    private String userType;
+    private String password;
 
     /**
      * 用户邮箱
@@ -63,10 +64,6 @@ public class SysUser extends BaseEntity implements Serializable {
      */
     private String avatar;
 
-    /**
-     * 密码
-     */
-    private String password;
 
     /**
      * 帐号状态（1正常 0停用）
@@ -74,35 +71,13 @@ public class SysUser extends BaseEntity implements Serializable {
     private Boolean status;
 
     /**
-     * 删除标志（0代表存在 1代表删除）
-     */
-    private Boolean delFlag;
-
-    /**
-     * 最后登录IP
-     */
-    private String loginIp;
-
-    /**
-     * 最后登录时间
-     */
-    private Date loginDate;
-
-    /**
-     * 创建者
-     */
-    private String createBy;
-
-    /**
-     * 更新者
-     */
-    private String updateBy;
-
-
-    /**
      * 备注
      */
     private String remark;
+
+    private Set<Long> roleIds;
+
+    private List<SelectOption> roles;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

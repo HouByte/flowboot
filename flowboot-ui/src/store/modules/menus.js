@@ -26,8 +26,6 @@ export default {
         },
 
         addTab(state, tab) {
-
-            console.log(tab.name,state.editableTabs)
             let index = state.editableTabs.findIndex(e => e.name === tab.name)
             console.log(index)
             if (index === -1) {
@@ -48,9 +46,6 @@ export default {
                 title: '首页',
                 name: 'Index',
             }]
-
-            console.log("clear 。。。。。")
-
         }
 
     },

@@ -4,6 +4,7 @@ import {Message} from "element-ui";
 import router from "./router";
 import {getToken} from "@/utils/auth";
 import el from "element-ui/src/locale/lang/el";
+import store from "@/store";
 
 const TIME_OUT = 30000 // 超时时间30秒
 axios.defaults.baseURL = "/api"
@@ -39,7 +40,12 @@ axios.interceptors.response.use(response => {
     }
 
     if (error.response.status === 401){
-        if (uri != '/login') {
+        if (uri !== '/login') {
+            store.dispatch('FedLogOut').then(() => {
+                Message.error("登入过期请重新登入");
+            }).catch(err => {
+                console.log(err)
+            })
             router.push("/login")
         }
 
@@ -68,7 +74,7 @@ const _request = (method, url, data) => {
         configData.params = data// get 请求的数据
     } else if (method === 'postForm') {
         configData.method = 'post'
-        if (Data instanceof FormData) {
+        if (data instanceof FormData) {
             configData.headers['Content-Type'] = 'multipart/form-data; charset=UTF-8'
             configData.data = data
         } else {

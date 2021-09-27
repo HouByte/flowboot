@@ -7,9 +7,11 @@ export function getRoleById(id) {
 }
 
 
+
+
 export function deleteRoleById(ids) {
 
-    return ajax.post("/sys/role/delete",ids);
+    return ajax.postJson("/sys/role/delete",ids);
 }
 
 export function updatePerm(id,menuIds) {
@@ -19,6 +21,9 @@ export function updatePerm(id,menuIds) {
 
 export function getRoleList(data) {
     return ajax.get("/sys/role/list",data);
+}
+export function roleSelectOptions() {
+    return ajax.get("/sys/role/roleSelectOptions");
 }
 
 export function saveRole(action,data){

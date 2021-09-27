@@ -53,70 +53,70 @@ Mock.mock('/sys/user/updatePass','post',()=>{
 //     return Result;
 // })
 
-Mock.mock('/sys/menu/nav','get',()=>{
-    Result.data = [
-        {
-            title:'系统管理',
-            name:'SysMange',
-            icon:'el-icon-s-operation',
-            component:'',
-            path:'/sys/users',
-            children:[
-                {
-                    title:'用户管理',
-                    name:'SysUser',
-                    icon:'el-icon-s-custom',
-                    path:'/sys/users',
-                    component:'sys/user/index',
-                    children:[]
-                },
-                {
-                    title:'角色管理',
-                    name:'SysRole',
-                    icon:'el-icon-rank',
-                    path:'/sys/roles',
-                    component:'sys/role/index',
-                    children:[]
-                },
-                {
-                    title:'菜单管理',
-                    name:'SysMenu',
-                    icon:'el-icon-menu',
-                    path:'/sys/menus',
-                    component:'sys/menu/index',
-                    children:[]
-                }
-            ]
-        },
-        {
-            title:'系统工具',
-            name:'SysTools',
-            icon:'el-icon-s-tools',
-            path:'tools',
-            component:'',
-            children:[
-                {
-                    title:'用户管理',
-                    name:'SysDict',
-                    icon:'el-icon-s-order',
-                    path:'/sys/dicts',
-                    component:'',
-                    children:[
-
-                    ]
-                }
-            ]
-        },
-        {
-            title:'直接菜单',
-            name:'SysTools2',
-            icon:'el-icon-s-tools',
-            path:'/sys/menus',
-            component:'sys/Menu'
-        }
-    ]
-    return Result;
-})
+// Mock.mock('/sys/menu/nav','get',()=>{
+//     Result.data = [
+//         {
+//             title:'系统管理',
+//             name:'SysMange',
+//             icon:'el-icon-s-operation',
+//             component:'',
+//             path:'/sys/users',
+//             children:[
+//                 {
+//                     title:'用户管理',
+//                     name:'SysUser',
+//                     icon:'el-icon-s-custom',
+//                     path:'/sys/users',
+//                     component:'sys/user/index',
+//                     children:[]
+//                 },
+//                 {
+//                     title:'角色管理',
+//                     name:'SysRole',
+//                     icon:'el-icon-rank',
+//                     path:'/sys/roles',
+//                     component:'sys/role/index',
+//                     children:[]
+//                 },
+//                 {
+//                     title:'菜单管理',
+//                     name:'SysMenu',
+//                     icon:'el-icon-menu',
+//                     path:'/sys/menus',
+//                     component:'sys/menu/index',
+//                     children:[]
+//                 }
+//             ]
+//         },
+//         {
+//             title:'系统工具',
+//             name:'SysTools',
+//             icon:'el-icon-s-tools',
+//             path:'tools',
+//             component:'',
+//             children:[
+//                 {
+//                     title:'用户管理',
+//                     name:'SysDict',
+//                     icon:'el-icon-s-order',
+//                     path:'/sys/dicts',
+//                     component:'',
+//                     children:[
+//
+//                     ]
+//                 }
+//             ]
+//         },
+//         {
+//             title:'直接菜单',
+//             name:'SysTools2',
+//             icon:'el-icon-s-tools',
+//             path:'/sys/menus',
+//             component:'sys/Menu'
+//         }
+//     ]
+//     return Result;
+// })
 
 
 //////////////// 菜单管理 ////////////////
@@ -319,146 +319,146 @@ Mock.mock('/delete/*','post',()=>{
 
 //////////////// 角色管理 ////////////////
 
-Mock.mock(RegExp('/sys/role/list*'), 'get', () => {
+// Mock.mock(RegExp('/sys/role/list*'), 'get', () => {
+//
+//     Result.data = {
+//         "records": [
+//             {
+//                 "id": 3,
+//                 "created": "2021-01-04T10:09:14",
+//                 "updated": "2021-01-30T08:19:52",
+//                 "statu": 1,
+//                 "name": "普通用户",
+//                 "code": "normal",
+//                 "remark": "只有基本查看功能",
+//                 "menuIds": []
+//             },
+//             {
+//                 "id": 6,
+//                 "created": "2021-01-16T13:29:03",
+//                 "updated": "2021-01-17T15:50:45",
+//                 "statu": 1,
+//                 "name": "超级管理员",
+//                 "code": "admin",
+//                 "remark": "系统默认最高权限，不可以编辑和任意修改",
+//                 "menuIds": []
+//             }
+//         ],
+//         "total": 2,
+//         "size": 10,
+//         "current": 1,
+//         "orders": [],
+//         "optimizeCountSql": true,
+//         "hitCount": false,
+//         "countId": null,
+//         "maxLimit": null,
+//         "searchCount": true,
+//         "pages": 1
+//     }
+//
+//     return Result
+//
+// })
 
-    Result.data = {
-        "records": [
-            {
-                "id": 3,
-                "created": "2021-01-04T10:09:14",
-                "updated": "2021-01-30T08:19:52",
-                "statu": 1,
-                "name": "普通用户",
-                "code": "normal",
-                "remark": "只有基本查看功能",
-                "menuIds": []
-            },
-            {
-                "id": 6,
-                "created": "2021-01-16T13:29:03",
-                "updated": "2021-01-17T15:50:45",
-                "statu": 1,
-                "name": "超级管理员",
-                "code": "admin",
-                "remark": "系统默认最高权限，不可以编辑和任意修改",
-                "menuIds": []
-            }
-        ],
-        "total": 2,
-        "size": 10,
-        "current": 1,
-        "orders": [],
-        "optimizeCountSql": true,
-        "hitCount": false,
-        "countId": null,
-        "maxLimit": null,
-        "searchCount": true,
-        "pages": 1
-    }
+// Mock.mock(RegExp('/sys/role/info/*'), 'get', () => {
+//
+//     Result.data = {
+//         "id": 6,
+//         "created": "2021-01-16T13:29:03",
+//         "updated": "2021-01-17T15:50:45",
+//         "statu": 1,
+//         "name": "超级管理员",
+//         "code": "admin",
+//         "remark": "系统默认最高权限，不可以编辑和任意修改",
+//         "menuIds": [3]
+//     }
+//
+//     return Result
+// })
 
-    return Result
-
-})
-
-Mock.mock(RegExp('/sys/role/info/*'), 'get', () => {
-
-    Result.data = {
-        "id": 6,
-        "created": "2021-01-16T13:29:03",
-        "updated": "2021-01-17T15:50:45",
-        "statu": 1,
-        "name": "超级管理员",
-        "code": "admin",
-        "remark": "系统默认最高权限，不可以编辑和任意修改",
-        "menuIds": [3]
-    }
-
-    return Result
-})
-
-Mock.mock(RegExp('/sys/role/*'), 'post', () => {
-
-    return Result
-})
+// Mock.mock(RegExp('/sys/role/*'), 'post', () => {
+//
+//     return Result
+// })
 
 //////////////// 用户管理 ////////////////
 
-Mock.mock(RegExp('/sys/user/list*'), 'get', () => {
-    Result.data = {
-        "records": [
-            {
-                "id": 1,
-                "created": "2021-01-12T22:13:53",
-                "updated": "2021-01-16T16:57:32",
-                "statu": 1,
-                "username": "admin",
-                "password": "$2a$10$R7zegeWzOXPw871CmNuJ6upC0v8D373GuLuTw8jn6NET4BkPRZfgK",
-                "avatar": "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
-                "email": "123@qq.com",
-                "city": "广州",
-                "lastLogin": "2020-12-30T08:38:37",
-                "roles": [
-                    {
-                        "id": 6,
-                        "created": "2021-01-16T13:29:03",
-                        "updated": "2021-01-17T15:50:45",
-                        "statu": 1,
-                        "name": "超级管理员",
-                        "code": "admin",
-                        "remark": "系统默认最高权限，不可以编辑和任意修改",
-                        "menuIds": []
-                    },
-                    {
-                        "id": 3,
-                        "created": "2021-01-04T10:09:14",
-                        "updated": "2021-01-30T08:19:52",
-                        "statu": 1,
-                        "name": "普通用户",
-                        "code": "normal",
-                        "remark": "只有基本查看功能",
-                        "menuIds": []
-                    }
-                ]
-            },
-            {
-                "id": 2,
-                "created": "2021-01-30T08:20:22",
-                "updated": "2021-01-30T08:55:57",
-                "statu": 1,
-                "username": "test",
-                "password": "$2a$10$0ilP4ZD1kLugYwLCs4pmb.ZT9cFqzOZTNaMiHxrBnVIQUGUwEvBIO",
-                "avatar": "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
-                "email": "test@qq.com",
-                "city": null,
-                "lastLogin": null,
-                "roles": [
-                    {
-                        "id": 3,
-                        "created": "2021-01-04T10:09:14",
-                        "updated": "2021-01-30T08:19:52",
-                        "statu": 1,
-                        "name": "普通用户",
-                        "code": "normal",
-                        "remark": "只有基本查看功能",
-                        "menuIds": []
-                    }
-                ]
-            }
-        ],
-        "total": 2,
-        "size": 10,
-        "current": 1,
-        "orders": [],
-        "optimizeCountSql": true,
-        "hitCount": false,
-        "countId": null,
-        "maxLimit": null,
-        "searchCount": true,
-        "pages": 1
-    }
-
-    return Result
-})
+// Mock.mock(RegExp('/sys/user/list*'), 'get', () => {
+//     Result.data = {
+//         "records": [
+//             {
+//                 "id": 1,
+//                 "created": "2021-01-12T22:13:53",
+//                 "updated": "2021-01-16T16:57:32",
+//                 "statu": 1,
+//                 "username": "admin",
+//                 "password": "$2a$10$R7zegeWzOXPw871CmNuJ6upC0v8D373GuLuTw8jn6NET4BkPRZfgK",
+//                 "avatar": "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
+//                 "email": "123@qq.com",
+//                 "city": "广州",
+//                 "lastLogin": "2020-12-30T08:38:37",
+//                 "roles": [
+//                     {
+//                         "id": 6,
+//                         "created": "2021-01-16T13:29:03",
+//                         "updated": "2021-01-17T15:50:45",
+//                         "statu": 1,
+//                         "name": "超级管理员",
+//                         "code": "admin",
+//                         "remark": "系统默认最高权限，不可以编辑和任意修改",
+//                         "menuIds": []
+//                     },
+//                     {
+//                         "id": 3,
+//                         "created": "2021-01-04T10:09:14",
+//                         "updated": "2021-01-30T08:19:52",
+//                         "statu": 1,
+//                         "name": "普通用户",
+//                         "code": "normal",
+//                         "remark": "只有基本查看功能",
+//                         "menuIds": []
+//                     }
+//                 ]
+//             },
+//             {
+//                 "id": 2,
+//                 "created": "2021-01-30T08:20:22",
+//                 "updated": "2021-01-30T08:55:57",
+//                 "statu": 1,
+//                 "username": "test",
+//                 "password": "$2a$10$0ilP4ZD1kLugYwLCs4pmb.ZT9cFqzOZTNaMiHxrBnVIQUGUwEvBIO",
+//                 "avatar": "https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png",
+//                 "email": "test@qq.com",
+//                 "city": null,
+//                 "lastLogin": null,
+//                 "roles": [
+//                     {
+//                         "id": 3,
+//                         "created": "2021-01-04T10:09:14",
+//                         "updated": "2021-01-30T08:19:52",
+//                         "statu": 1,
+//                         "name": "普通用户",
+//                         "code": "normal",
+//                         "remark": "只有基本查看功能",
+//                         "menuIds": []
+//                     }
+//                 ]
+//             }
+//         ],
+//         "total": 2,
+//         "size": 10,
+//         "current": 1,
+//         "orders": [],
+//         "optimizeCountSql": true,
+//         "hitCount": false,
+//         "countId": null,
+//         "maxLimit": null,
+//         "searchCount": true,
+//         "pages": 1
+//     }
+//
+//     return Result
+// })
 
 
 // Mock.mock(RegExp('/sys/user/*'), 'post', () => {

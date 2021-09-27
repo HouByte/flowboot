@@ -1,7 +1,5 @@
 import {ajax} from "../ajax";
 export function getMenuNav() {
-
-
     return ajax.get("/sys/menu/nav");
 }
 
@@ -10,6 +8,10 @@ export function getMenuById(id) {
     return ajax.get("/sys/menu/info/"+id);
 }
 
+export function getMenuTreeselect(id) {
+
+    return ajax.get("/sys/menu/roleMenuTreeselect/"+id);
+}
 
 export function deleteById(id) {
 
@@ -17,6 +19,10 @@ export function deleteById(id) {
 }
 
 export function getMenuTrees() {
+    return ajax.get("/sys/menu/tree");
+}
+
+export function getMenuTreeList() {
     return ajax.get("/sys/menu/list");
 }
 

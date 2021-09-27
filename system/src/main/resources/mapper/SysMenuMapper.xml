@@ -11,11 +11,11 @@
             <result property="orderNum" column="order_num" jdbcType="INTEGER"/>
             <result property="path" column="path" jdbcType="VARCHAR"/>
             <result property="component" column="component" jdbcType="VARCHAR"/>
-            <result property="isFrame" column="is_frame" jdbcType="INTEGER"/>
-            <result property="isCache" column="is_cache" jdbcType="INTEGER"/>
-            <result property="menuType" column="menu_type" jdbcType="CHAR"/>
-            <result property="visible" column="visible" jdbcType="CHAR"/>
-            <result property="status" column="status" jdbcType="CHAR"/>
+            <result property="isFrame" column="is_frame" jdbcType="TINYINT"/>
+            <result property="isCache" column="is_cache" jdbcType="TINYINT"/>
+            <result property="menuType" column="menu_type" jdbcType="TINYINT"/>
+            <result property="visible" column="visible" jdbcType="TINYINT"/>
+            <result property="status" column="status" jdbcType="TINYINT"/>
             <result property="perms" column="perms" jdbcType="VARCHAR"/>
             <result property="icon" column="icon" jdbcType="VARCHAR"/>
             <result property="createBy" column="create_by" jdbcType="VARCHAR"/>
@@ -44,5 +44,34 @@
         ur.user_id = #{userId}
         AND m.`status` = 0
         AND m.perms != ''
+    </select>
+    <select id="getMenuIdsByUserId" resultType="java.lang.Long" parameterType="java.lang.Long">
+        SELECT
+            sys_role_menu.menu_id
+        FROM
+            sys_role_menu
+                INNER JOIN
+            sys_user_role
+            ON
+                sys_role_menu.role_id = sys_user_role.role_id
+        WHERE user_id = #{userId}
+    </select>
+    <select id="queryMenuTrees" resultType="cn.flowboot.system.domain.vo.MenuTree">
+        SELECT
+            m.menu_id AS id,
+            m.menu_name AS label,
+            m.parent_id AS pid
+        FROM
+            sys_menu AS m
+        WHERE
+            m.`status` = 1
+    </select>
+    <select id="queryMenuIdsByRoleId" resultType="java.lang.Long">
+        SELECT
+            rm.menu_id
+        FROM
+            sys_role_menu AS rm
+        WHERE
+            rm.role_id = #{roleId}
     </select>
 </mapper>

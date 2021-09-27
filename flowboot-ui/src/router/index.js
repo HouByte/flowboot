@@ -47,7 +47,7 @@ const routes = [{
       title: '首页'
     },
   },
-    UserRePassword
+    UserRePassword,err403, err404, err500
   ]
 },
   {
@@ -55,7 +55,7 @@ const routes = [{
     name: 'Login',
     component: Login
   },
-  err403, err404, err500
+
 
 ]
 
@@ -104,12 +104,10 @@ router.beforeEach((to, from, next) => {
       })
 
     } else {
-      if (store.getters.permissions.length === 0) {
+      if (store.getters.nav.length === 0 || store.getters.permissions.length === 0) {
         // 判断当前用户是否已拉取完user_info信息
-        //generateRoutes();
-
         store.dispatch('GetInfo').then(() => {
-          //generateRoutes();
+          generateRoutes();
         }).catch(err => {
           console.log(err)
           // store.dispatch('Logout').then(() => {

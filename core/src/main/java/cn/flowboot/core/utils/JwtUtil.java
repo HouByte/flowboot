@@ -70,7 +70,7 @@ public class JwtUtil {
      * @return
      */
     public String createAccessToken(Map<String,Object> map){
-        return createJwtToken(map,jwtProperties.getAccessTokenExpireTime(),getKey());
+        return createJwtToken(map,jwtProperties.getExpire(),getKey());
     }
 
     /**
@@ -79,7 +79,7 @@ public class JwtUtil {
      * @return
      */
     public String createRefreshToken(Map<String,Object> map){
-        return createJwtToken(map,jwtProperties.getRefreshTokenExpireTime(),getRefreshKey());
+        return createJwtToken(map,jwtProperties.getExpire(),getRefreshKey());
     }
 
     /**
@@ -116,7 +116,7 @@ public class JwtUtil {
         return parseClaims(jwtToken, getRefreshKey())
                 .map(claims -> Jwts.builder()
                         .setClaims(claims)
-                        .setExpiration(new Date(System.currentTimeMillis() + jwtProperties.getAccessTokenExpireTime()))
+                        .setExpiration(new Date(System.currentTimeMillis() + jwtProperties.getExpire()))
                         .signWith(getKey(), signatureAlgorithm).compact())
                 .orElseThrow(()->new AccessDeniedException("访问被拒绝"));
     }

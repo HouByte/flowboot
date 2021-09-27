@@ -2,9 +2,6 @@ import {ajax} from "../ajax";
 
 
 
-export function getUserInfo() {
-    return ajax.get("/sys/userInfo");
-}
 
 export function updatePass(data){
     return ajax.postJson('/sys/user/updatePass',data);
@@ -17,14 +14,14 @@ export function getUserById(id) {
 }
 
 
-export function deleteUserById(ids) {
+export function deleteUserById(data) {
 
-    return ajax.post("/sys/user/delete",ids);
+    return ajax.postJson("/sys/user/delete",data);
 }
 
 export function updateUserRole(id,roleId) {
 
-    return ajax.post("/sys/user/role/"+id,roleId);
+    return ajax.postForm("/sys/user/role/"+id,roleId);
 }
 
 export function getUserList(data) {

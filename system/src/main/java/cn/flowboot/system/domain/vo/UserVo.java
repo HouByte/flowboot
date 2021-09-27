@@ -1,13 +1,14 @@
-package cn.flowboot.system.domain.entity;
+package cn.flowboot.system.domain.vo;
 
 import cn.flowboot.common.croe.domain.BaseEntity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
+
 import java.io.Serializable;
 import java.util.Date;
-import lombok.Data;
 
 /**
  * 用户信息表
@@ -15,7 +16,7 @@ import lombok.Data;
  */
 @TableName(value ="sys_user")
 @Data
-public class SysUser extends BaseEntity implements Serializable {
+public class UserVo extends BaseEntity implements Serializable {
 
     /**
      * ID
@@ -43,6 +44,8 @@ public class SysUser extends BaseEntity implements Serializable {
      */
     private String userType;
 
+
+
     /**
      * 用户邮箱
      */
@@ -63,20 +66,12 @@ public class SysUser extends BaseEntity implements Serializable {
      */
     private String avatar;
 
-    /**
-     * 密码
-     */
-    private String password;
 
     /**
      * 帐号状态（1正常 0停用）
      */
     private Boolean status;
 
-    /**
-     * 删除标志（0代表存在 1代表删除）
-     */
-    private Boolean delFlag;
 
     /**
      * 最后登录IP

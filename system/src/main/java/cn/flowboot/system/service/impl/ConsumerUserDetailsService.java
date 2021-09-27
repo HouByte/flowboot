@@ -29,7 +29,7 @@ import java.util.List;
 @Component
 public class ConsumerUserDetailsService implements UserDetailsService {
 
-    private final PasswordEncoder passwordEncoder;
+
     private final SysUserService sysUserService;
 
     @Override

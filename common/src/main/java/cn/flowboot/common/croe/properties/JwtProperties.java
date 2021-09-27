@@ -21,16 +21,14 @@ public class JwtProperties {
     private String id = "flowboot";
     private String header = "Authorization";
     private String prefix = "Bearer ";
-    private Long accessTokenExpireTime = 600_000L;
-    private Long refreshTokenExpireTime = 30 * 24 * 3600 * 1000L;
     //密钥
     private String accessSecret = "cuAihCz53DZRjZwbsGcZJ2Ai6At+T142uphtJMsk7iQ=";
     //refresh密钥
     private String refreshSecret = "cuAihCz53DZRaZwbsGcZJ2Ai6At+T142uphtJMsk7iQ=";
-    //令牌过期时间(天）
-    private int expire;
-    //令牌缓存时间(天)
-    private int cacheExpire;
+    //令牌过期时间(毫秒） 默认一天
+    private Long expire = 1000L * 60 * 60 * 24;
+    //令牌缓存时间(毫秒)
+    private Long cacheExpire = 1000L * 60 * 60 * 24;
     private String[] ignoreFilter;
     private String[] ignoreAuth;
 }

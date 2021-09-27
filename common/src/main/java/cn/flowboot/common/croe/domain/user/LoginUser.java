@@ -80,12 +80,12 @@ public class LoginUser implements UserDetails {
     private String password;
 
     /**
-     * 帐号状态（0正常 1停用）
+     * 帐号状态（1正常 0停用）
      */
     private Boolean status;
 
     /**
-     * 删除标志（0代表存在 2代表删除）
+     * 删除标志（0代表存在 1代表删除）
      */
     private Boolean delFlag;
 
@@ -122,6 +122,15 @@ public class LoginUser implements UserDetails {
 
     private Set<String> roles;
 
+    public boolean isAdmin() {
+        return isAdmin(this.userId);
+    }
+
+    public static boolean isAdmin(Long userId)
+    {
+        return userId != null && 1L == userId;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return grantedAuthorities;
@@ -149,6 +158,6 @@ public class LoginUser implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return !status;
+        return status;
     }
 }

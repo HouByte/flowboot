@@ -53,8 +53,6 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
 
-
-
         if (tokenService.checkIgnore(request)) {
             log.debug("{} 放行",request.getServletPath());
             chain.doFilter(request, response);
@@ -74,9 +72,8 @@ public class JwtAuthenticationFilter extends BasicAuthenticationFilter {
             return;
         }
 
-
         //用户操作但当前上下文权限不存在
-        if (ObjectUtils.isNotEmpty(loginUser) && ObjectUtils.isNotEmpty(SecurityUtils.getAuthentication())) {
+        if (ObjectUtils.isNotEmpty(loginUser) && ObjectUtils.isEmpty(SecurityUtils.getAuthentication())) {
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginUser, null, loginUser.getAuthorities());
             authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);

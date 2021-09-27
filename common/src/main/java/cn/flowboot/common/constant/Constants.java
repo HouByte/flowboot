@@ -141,4 +141,10 @@ public class Constants {
      * LDAP 远程方法调用
      */
     public static final String LOOKUP_LDAP = "ldap://";
+
+    /** 所有权限标识 */
+    public static final String ALL_PERMISSION = "*:*:*";
+
+    /** 管理员角色权限标识 */
+    public static final String SUPER_ADMIN = "admin";
 }

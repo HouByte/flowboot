@@ -11,80 +11,61 @@
       </el-form-item>
 
       <el-form-item>
-        <el-button @click="getRoleList">搜索</el-button>
+        <el-button @click="getRoleList" icon="el-icon-search">搜索</el-button>
       </el-form-item>
 
       <el-form-item>
-        <el-button type="primary" @click="dialogVisible = true">新增</el-button>
+        <el-button type="primary" icon="el-icon-plus" @click="handleAdd">新增</el-button>
       </el-form-item>
       <el-form-item>
-        <el-popconfirm title="这是确定批量删除吗？" @confirm="delHandle(null)">
-          <el-button type="danger" slot="reference" :disabled="delBtlStatu">批量删除</el-button>
+        <el-popconfirm title="这是确定批量删除吗？" @confirm="handleDelete(null)">
+          <el-button type="danger"  icon="el-icon-delete" slot="reference" :disabled="delBtlStatu">批量删除</el-button>
         </el-popconfirm>
       </el-form-item>
     </el-form>
 
-    <el-table
-        ref="multipleTable"
-        :data="tableData"
-        tooltip-effect="dark"
-        style="width: 100%"
-        border
-        stripe
-        @selection-change="handleSelectionChange">
 
-      <el-table-column
-          type="selection"
-          width="55">
-      </el-table-column>
-
-      <el-table-column
-          prop="name"
-          label="名称"
-          width="120">
-      </el-table-column>
-      <el-table-column
-          prop="code"
-          label="唯一编码"
-          show-overflow-tooltip>
-      </el-table-column>
-      <el-table-column
-          prop="remark"
-          label="描述"
-          show-overflow-tooltip>
-      </el-table-column>
-
-      <el-table-column
-          prop="statu"
-          label="状态">
+    <el-table v-loading="loading" ref="multipleTable" style="width: 100%" border stripe :data="tableData" @selection-change="handleSelectionChange">
+      <el-table-column type="selection" width="55" align="center" />
+      <el-table-column label="角色名称"  align="center" prop="roleName" :show-overflow-tooltip="true" width="150" />
+      <el-table-column label="权限字符"  align="center" prop="roleKey" :show-overflow-tooltip="true" width="150" />
+      <el-table-column label="备注" align="center" prop="remark" width="180"/>
+      <el-table-column label="创建人" align="center" prop="createBy" width="120"/>
+      <el-table-column label="更新人" align="center" prop="updateBy" width="120"/>
+      <el-table-column label="创建时间" align="center" prop="createTime" width="180"/>
+      <el-table-column label="状态" align="center" prop="status" width="120">
         <template slot-scope="scope">
-          <el-tag size="small" v-if="scope.row.statu === 1" type="success">正常</el-tag>
-          <el-tag size="small" v-else-if="scope.row.statu === 0" type="danger">禁用</el-tag>
-        </template>
-
-      </el-table-column>
-      <el-table-column
-          prop="icon"
-          label="操作">
-
-        <template slot-scope="scope">
-          <el-button type="text" @click="permHandle(scope.row.id)">分配权限</el-button>
-          <el-divider direction="vertical"></el-divider>
-
-          <el-button type="text" @click="editHandle(scope.row.id)">编辑</el-button>
-          <el-divider direction="vertical"></el-divider>
-
-          <template>
-            <el-popconfirm title="这是一段内容确定删除吗？" @confirm="delHandle(scope.row.id)">
-              <el-button type="text" slot="reference">删除</el-button>
-            </el-popconfirm>
-          </template>
-
+          <el-switch v-model="scope.row.status" @change="handleStatusChange(scope.row)"/>
         </template>
       </el-table-column>
 
+      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+        <template slot-scope="scope" v-if="scope.row.roleId !== 1">
+          <el-button
+              size="mini"
+              type="text"
+              icon="el-icon-edit"
+              @click="handleUpdate(scope.row)"
+              v-hasPermi="['system:role:edit']"
+          >修改</el-button>
+
+          <el-popconfirm title="这是一段内容确定删除吗？" @confirm="handleDelete(scope.row.roleId)">
+            <el-button size="mini" icon="el-icon-delete"  type="text" slot="reference" v-hasPermi="['system:role:remove']">删除</el-button>
+          </el-popconfirm>
+<!--          <el-dropdown size="mini" @command="(command) => handleCommand(command, scope.row)" v-hasPermi="['system:role:edit']">-->
+<!--            <span class="el-dropdown-link">-->
+<!--              <i class="el-icon-d-arrow-right el-icon&#45;&#45;right"></i>更多-->
+<!--            </span>-->
+<!--            <el-dropdown-menu slot="dropdown">-->
+<!--              <el-dropdown-item command="handleDataScope" icon="el-icon-circle-check"-->
+<!--                                v-hasPermi="['system:role:edit']">数据权限</el-dropdown-item>-->
+<!--              <el-dropdown-item command="handleAuthUser" icon="el-icon-user"-->
+<!--                                v-hasPermi="['system:role:edit']">分配用户</el-dropdown-item>-->
+<!--            </el-dropdown-menu>-->
+<!--          </el-dropdown>-->
+        </template>
+      </el-table-column>
     </el-table>
-
 
     <el-pagination
         @size-change="handleSizeChange"
@@ -99,73 +80,64 @@
 
     <!--新增对话框-->
     <el-dialog
-        title="提示"
+        :title="dialogTitle"
         :visible.sync="dialogVisible"
         width="600px"
         :before-close="handleClose">
 
-      <el-form :model="editForm" :rules="editFormRules" ref="editForm" label-width="100px" class="demo-editForm">
-
-        <el-form-item label="角色名称" prop="name" label-width="100px">
-          <el-input v-model="editForm.name" autocomplete="off"></el-input>
+      <el-form ref="editForm" :model="editForm" :rules="editFormRules" label-width="100px" class="demo-editForm">
+        <el-form-item label="角色名称" prop="roleName">
+          <el-input v-model="editForm.roleName" placeholder="请输入角色名称" />
         </el-form-item>
-
-        <el-form-item label="唯一编码" prop="code" label-width="100px">
-          <el-input v-model="editForm.code" autocomplete="off"></el-input>
+        <el-form-item prop="roleKey">
+          <span slot="label">
+            <el-tooltip content="控制器中定义的权限字符，如：@PreAuthorize(`@ss.hasRole('admin')`)" placement="top">
+              <i class="el-icon-question"></i>
+            </el-tooltip>
+            权限字符
+          </span>
+          <el-input v-model="editForm.roleKey" placeholder="请输入权限字符" />
         </el-form-item>
-
-        <el-form-item label="描述" prop="remark" label-width="100px">
-          <el-input v-model="editForm.remark" autocomplete="off"></el-input>
+        <el-form-item label="角色顺序" prop="roleSort">
+          <el-input-number v-model="editForm.roleSort" controls-position="right" :min="0" />
         </el-form-item>
-
-
-        <el-form-item label="状态" prop="statu" label-width="100px">
-          <el-radio-group v-model="editForm.statu">
-            <el-radio :label=0>禁用</el-radio>
-            <el-radio :label=1>正常</el-radio>
+        <el-form-item label="状态">
+          <el-radio-group v-model="editForm.status">
+            <el-switch v-model="editForm.status" @change="handleStatusChange(scope.row)"/>
           </el-radio-group>
         </el-form-item>
-
-        <el-form-item>
-          <el-button type="primary" @click="submitForm('editForm')">立即创建</el-button>
-          <el-button @click="resetForm('editForm')">重置</el-button>
+        <el-form-item label="菜单权限">
+          <el-checkbox v-model="menuExpand" @change="handleCheckedTreeExpand($event, 'menu')">展开/折叠</el-checkbox>
+          <el-checkbox v-model="menuNodeAll" @change="handleCheckedTreeNodeAll($event, 'menu')">全选/全不选</el-checkbox>
+          <el-checkbox v-model="editForm.menuCheckStrictly" @change="handleCheckedTreeConnect($event, 'menu')">父子联动</el-checkbox>
+          <el-tree
+              class="tree-border"
+              :data="menuOptions"
+              show-checkbox
+              ref="menu"
+              node-key="id"
+              :check-strictly="!editForm.menuCheckStrictly"
+              empty-text="加载中，请稍后"
+              :props="defaultProps"
+          ></el-tree>
+        </el-form-item>
+        <el-form-item label="备注">
+          <el-input v-model="editForm.remark" type="textarea" placeholder="请输入内容"></el-input>
         </el-form-item>
       </el-form>
-
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitForm('editForm')">确 定</el-button>
+        <el-button @click="handleClose">取 消</el-button>
+      </div>
     </el-dialog>
 
-    <el-dialog
-        title="分配权限"
-        :visible.sync="permDialogVisible"
-        width="600px">
-
-      <el-form :model="permForm">
-
-        <el-tree
-            :data="permTreeData"
-            show-checkbox
-            ref="permTree"
-            :default-expand-all=true
-            node-key="id"
-            :props="defaultProps">
-        </el-tree>
-
-
-      </el-form>
-
-      <span slot="footer" class="dialog-footer">
-			    <el-button @click="permDialogVisible = false">取 消</el-button>
-			    <el-button type="primary" @click="submitPermFormHandle('permForm')">确 定</el-button>
-			</span>
-
-    </el-dialog>
 
   </div>
 </template>
 
 <script>
-import {getRoleById, getRoleList, saveRole, updatePerm,deleteRoleById } from "@/api/role";
-import {getMenuTrees} from "@/api/menu";
+import {getRoleById, getRoleList, saveRole, updatePerm, deleteRoleById } from "@/api/role";
+import {getMenuTrees,getMenuTreeselect} from "@/api/menu";
 
 export default {
   name: "Role",
@@ -179,43 +151,53 @@ export default {
       current: 1,
 
       dialogVisible: false,
+      dialogTitle:'',
       editForm: {
-
+        status:true
       },
-
+      menuExpand:false,
+      menuNodeAll:false,
+      defaultProps: {
+        children: 'children',
+        label: 'label'
+      },
+      menuOptions: [],
+      loading:false,
       tableData: [],
 
       editFormRules: {
-        name: [
-          {required: true, message: '请输入角色名称', trigger: 'blur'}
-        ],
-        code: [
-          {required: true, message: '请输入唯一编码', trigger: 'blur'}
-        ],
-        statu: [
-          {required: true, message: '请选择状态', trigger: 'blur'}
-        ]
+
       },
 
       multipleSelection: [],
 
       permDialogVisible: false,
-      permForm: {},
-      defaultProps: {
-        children: 'children',
-        label: 'name'
-      },
-      permTreeData: []
+      permForm: {}
+
     }
   },
   created() {
     this.getRoleList()
 
     getMenuTrees().then(res => {
-      this.permTreeData = res
+      this.menuOptions = res
     })
   },
   methods: {
+    getRoleList() {
+      this.loading = true;
+      getRoleList({
+        params: {
+          name: this.searchForm.name,
+          page: this.current,
+          limit: this.size
+        }
+      }).then(res => {
+        this.tableData = res.rows
+        this.total = res.total
+        this.loading = false;
+      })
+    },
     toggleSelection(rows) {
       if (rows) {
         rows.forEach(row => {
@@ -234,12 +216,10 @@ export default {
     },
 
     handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
       this.size = val
       this.getRoleList()
     },
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
       this.current = val
       this.getRoleList()
     },
@@ -248,42 +228,29 @@ export default {
       this.$refs[formName].resetFields();
       this.dialogVisible = false
       this.editForm = {}
+      this.menuNodeAll = false;
+      this.menuExpand = false;
+      this.handleCheckedTreeNodeAll(null,'menu');
     },
     handleClose() {
       this.resetForm('editForm')
     },
 
-    getRoleList() {
-      getRoleList({
-        params: {
-          name: this.searchForm.name,
-          current: this.current,
-          size: this.size
-        }
-      }).then(res => {
-        this.tableData = res.records
-        this.size = res.size
-        this.current = res.current
-        this.total = res.total
-      })
-    },
-
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
+          this.editForm.menuIds = this.getMenuAllCheckedKeys();
           saveRole(this.editForm.id?'update' : 'save', this.editForm)
               .then(res => {
 
                 this.$message({
                   showClose: true,
                   message: '恭喜你，操作成功',
-                  type: 'success',
-                  onClose:() => {
-                    this.getRoleList()
-                  }
+                  type: 'success'
                 });
 
                 this.dialogVisible = false
+                this.getRoleList()
                 this.resetForm(formName)
               })
         } else {
@@ -292,33 +259,86 @@ export default {
         }
       });
     },
-    editHandle(id) {
-      getRoleById(id).then(res => {
-        this.editForm = res
-        this.dialogVisible = true
-      })
+
+    handleAdd() {
+      this.dialogTitle = "添加"
+      this.dialogVisible = true
     },
-    delHandle(id) {
+
+    handleUpdate(row) {
+      this.editForm = row
+      this.dialogTitle = "编辑"
+      this.dialogVisible = true
+      getMenuTreeselect(row.roleId).then(res=>{
+        this.$nextTick(() => {
+          let checkedKeys = res
+          checkedKeys.forEach((v) => {
+            this.$nextTick(()=>{
+              this.$refs.menu.setChecked(v, true ,false);
+            })
+          })
+        });
+      })
+
+    },
+    handleDelete(id) {
       var ids = []
 
       if (id) {
         ids.push(id)
       } else {
         this.multipleSelection.forEach(row => {
-          ids.push(row.id)
+          ids.push(row.roleId)
         })
       }
 
-      deleteRoleById(ids).then(res => {
+      deleteRoleById({ids}).then(res => {
         this.$message({
           showClose: true,
           message: '恭喜你，操作成功',
-          type: 'success',
-          onClose:() => {
-            this.getRoleList()
-          }
+          type: 'success'
         });
+        this.getRoleList()
       })
+    },
+    // 树权限（展开/折叠）
+    handleCheckedTreeExpand(value, type) {
+      if (type == 'menu') {
+        let treeList = this.menuOptions;
+        for (let i = 0; i < treeList.length; i++) {
+          this.$refs.menu.store.nodesMap[treeList[i].id].expanded = value;
+        }
+      } else if (type == 'dept') {
+        let treeList = this.deptOptions;
+        for (let i = 0; i < treeList.length; i++) {
+          this.$refs.dept.store.nodesMap[treeList[i].id].expanded = value;
+        }
+      }
+    },
+    // 树权限（全选/全不选）
+    handleCheckedTreeNodeAll(value, type) {
+      if (type == 'menu') {
+        this.$refs.menu.setCheckedNodes(value ? this.menuOptions: []);
+      } else if (type == 'dept') {
+        this.$refs.dept.setCheckedNodes(value ? this.deptOptions: []);
+      }
+    },
+    // 树权限（父子联动）
+    handleCheckedTreeConnect(value, type) {
+      if (type == 'menu') {
+        this.form.menuCheckStrictly = value ? true: false;
+      } else if (type == 'dept') {
+        this.form.deptCheckStrictly = value ? true: false;
+      }
+    },
+    // 所有菜单节点数据
+    getMenuAllCheckedKeys() {
+      // 目前被选中的菜单节点
+      let checkedKeys = this.$refs.menu.getCheckedKeys();
+      // 半选中的菜单节点
+      let halfCheckedKeys = this.$refs.menu.getHalfCheckedKeys();
+      checkedKeys.unshift.apply(checkedKeys, halfCheckedKeys);
+      return checkedKeys;
     },
     permHandle(id) {
       this.permDialogVisible = true

@@ -1,40 +1,33 @@
-package cn.flowboot.system.domain.entity;
+package cn.flowboot.system.domain.vo;
 
 import cn.flowboot.common.croe.domain.BaseEntity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import java.io.Serializable;
+import lombok.Builder;
 import lombok.Data;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 菜单权限表
  * @TableName sys_menu
  */
-@TableName(value ="sys_menu")
+@Builder
 @Data
-public class SysMenu extends BaseEntity implements Serializable {
-    /**
-     * 菜单ID
-     */
-    @TableId(type = IdType.AUTO)
-    private Long menuId;
+public class MenuNavVo implements Serializable {
 
+    private Long id;
+    private Long pid;
     /**
      * 菜单名称
      */
-    private String menuName;
+    private String title;
 
-    /**
-     * 父菜单ID
-     */
-    private Long parentId;
-
-    /**
-     * 显示顺序
-     */
-    private Integer orderNum;
+    private String name;
 
     /**
      * 路由地址
@@ -57,21 +50,6 @@ public class SysMenu extends BaseEntity implements Serializable {
     private Boolean isCache;
 
     /**
-     * 菜单类型（M目录 C菜单 F按钮）
-     */
-    private String menuType;
-
-    /**
-     * 菜单状态（1显示 0隐藏）
-     */
-    private Boolean visible;
-
-    /**
-     * 菜单状态（1正常 0停用）
-     */
-    private Boolean status;
-
-    /**
      * 权限标识
      */
     private String perms;
@@ -81,20 +59,9 @@ public class SysMenu extends BaseEntity implements Serializable {
      */
     private String icon;
 
-    /**
-     * 创建者
-     */
-    private String createBy;
+    private List<MenuNavVo> children = new ArrayList<>();
 
-    /**
-     * 更新者
-     */
-    private String updateBy;
 
-    /**
-     * 备注
-     */
-    private String remark;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
