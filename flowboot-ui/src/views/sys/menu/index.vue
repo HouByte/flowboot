@@ -5,16 +5,20 @@
       <el-form-item>
         <el-button type="primary" @click="handleAdd">新增</el-button>
       </el-form-item>
+      <el-form-item>
+        <el-button type="info" @click="handleExpand">{{expandTitle}}</el-button>
+      </el-form-item>
     </el-form>
 
     <el-table
+        v-if="refreshTable"
         :data="tableData"
         style="width: 100%;margin-bottom: 20px;"
         row-key="menuId"
         border
         stripe
+        :default-expand-all="expands"
         @row-click="rowClick"
-        @selection-change="handleSelectionChange"
         :tree-props="{children: 'children', hasChildren: 'hasChildren'}">
 
       <el-table-column
@@ -67,75 +71,6 @@
 
     </el-table>
 
-
-<!--    &lt;!&ndash;新增对话框&ndash;&gt;-->
-<!--    <el-dialog-->
-<!--        title="提示"-->
-<!--        :visible.sync="dialogVisible"-->
-<!--        width="600px"-->
-<!--        :before-close="handleClose">-->
-
-<!--      <el-form :model="editForm" :rules="editFormRules" ref="editForm" label-width="100px" class="demo-editForm">-->
-
-<!--        <el-form-item label="上级菜单" prop="parentId">-->
-<!--          <el-select v-model="editForm.parentId" placeholder="请选择上级菜单">-->
-<!--            <template v-for="item in tableData">-->
-<!--              <el-option :label="item.name" :value="item.id"></el-option>-->
-<!--              <template v-for="child in item.children">-->
-<!--                <el-option :label="child.name" :value="child.id">-->
-<!--                  <span>{{ "- " + child.name }}</span>-->
-<!--                </el-option>-->
-<!--              </template>-->
-<!--            </template>-->
-<!--          </el-select>-->
-<!--        </el-form-item>-->
-
-<!--        <el-form-item label="菜单名称" prop="name" label-width="100px">-->
-<!--          <el-input v-model="editForm.menuName" autocomplete="off"></el-input>-->
-<!--        </el-form-item>-->
-
-<!--        <el-form-item label="权限编码" prop="perms" label-width="100px">-->
-<!--          <el-input v-model="editForm.perms" autocomplete="off"></el-input>-->
-<!--        </el-form-item>-->
-
-<!--        <el-form-item label="图标" prop="icon" label-width="100px">-->
-<!--          <icon-picker v-model="editForm.icon"></icon-picker>-->
-<!--        </el-form-item>-->
-<!--        <el-form-item label="菜单URL" prop="path" label-width="100px">-->
-<!--          <el-input v-model="editForm.path" autocomplete="off"></el-input>-->
-<!--        </el-form-item>-->
-
-<!--        <el-form-item label="菜单组件" prop="component" label-width="100px">-->
-<!--          <el-input v-model="editForm.component" autocomplete="off"></el-input>-->
-<!--        </el-form-item>-->
-
-<!--        <el-form-item label="类型" prop="type" label-width="100px">-->
-<!--          <el-radio-group v-model="editForm.type">-->
-<!--            <el-radio :label=0>目录</el-radio>-->
-<!--            <el-radio :label=1>菜单</el-radio>-->
-<!--            <el-radio :label=2>按钮</el-radio>-->
-<!--          </el-radio-group>-->
-<!--        </el-form-item>-->
-
-<!--        <el-form-item label="状态" prop="statu" label-width="100px">-->
-<!--          <el-radio-group v-model="editForm.statu">-->
-<!--            <el-radio :label=0>禁用</el-radio>-->
-<!--            <el-radio :label=1>正常</el-radio>-->
-<!--          </el-radio-group>-->
-<!--        </el-form-item>-->
-
-<!--        <el-form-item label="排序号" prop="orderNum" label-width="100px">-->
-<!--          <el-input-number v-model="editForm.orderNum" :min="1" label="排序号">1</el-input-number>-->
-<!--        </el-form-item>-->
-
-
-<!--        <el-form-item>-->
-<!--          <el-button type="primary" @click="submitForm('editForm')">立即创建</el-button>-->
-<!--          <el-button @click="resetForm('editForm')">重置</el-button>-->
-<!--        </el-form-item>-->
-<!--      </el-form>-->
-
-<!--    </el-dialog>-->
 
     <!-- 添加或修改菜单对话框 -->
     <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" width="680px" append-to-body>
@@ -308,6 +243,9 @@ export default {
         ]
       },
       tableData: [],
+      expands:false,
+      refreshTable:true,
+      expandTitle:'展开',
       currentSelectRowId:undefined,
       menuOptions:[]
     }
@@ -417,6 +355,21 @@ export default {
         row.status = row.status === true ? false : true;
       });
 
+    },
+    handleExpand(){
+      this.refreshTable = false;
+
+      if (this.expands){
+        this.expands = false;
+        this.expandTitle = '收起'
+      } else {
+        this.expands = true;
+        this.expandTitle = '展开'
+      }
+
+      this.$nextTick(() => {
+        this.refreshTable = true;
+      });
     }
   }
 }
