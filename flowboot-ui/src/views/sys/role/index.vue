@@ -240,7 +240,7 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.editForm.menuIds = this.getMenuAllCheckedKeys();
-          saveRole(this.editForm.id?'update' : 'save', this.editForm)
+          saveRole(this.editForm.roleId?'update' : 'save', this.editForm)
               .then(res => {
 
                 this.$message({

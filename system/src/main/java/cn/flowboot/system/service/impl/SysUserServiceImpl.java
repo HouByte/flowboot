@@ -7,9 +7,12 @@ import cn.flowboot.common.utils.CopyUtil;
 import cn.flowboot.common.utils.SecurityUtils;
 import cn.flowboot.system.domain.dto.UserDto;
 import cn.flowboot.system.domain.entity.SysRole;
+import cn.flowboot.system.domain.entity.SysRoleMenu;
+import cn.flowboot.system.domain.entity.SysUserRole;
 import cn.flowboot.system.domain.vo.UserVo;
 import cn.flowboot.system.service.SysMenuService;
 import cn.flowboot.system.service.SysRoleService;
+import cn.flowboot.system.service.SysUserRoleService;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import cn.flowboot.system.domain.entity.SysUser;
@@ -41,6 +44,7 @@ implements SysUserService{
 
     private final SysMenuService sysMenuService;
     private final SysRoleService sysRoleService;
+    private final SysUserRoleService sysUserRoleService;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -99,6 +103,19 @@ implements SysUserService{
         }
 
         AssertUtil.isTrue(!saveOrUpdate(sysUser),"保存失败");
+        relationRole(update,sysUser.getUserId(),userDto.getRoleIds());
+    }
+
+    private void relationRole(boolean update, Long userId, Set<Long> roleIds) {
+        if (update){
+            sysUserRoleService.removeByUserd(userId);
+        }
+        if (roleIds == null || roleIds.size() == 0){
+            return;
+        }
+        //新增不需要删除，更新删除后添加
+        List<SysUserRole> sysUserRoles = roleIds.stream().map(roleId -> new SysUserRole(userId, roleId)).collect(Collectors.toList());
+        AssertUtil.isTrue(!sysUserRoleService.saveBatch(sysUserRoles),"授权失败");
     }
 
     @Override
@@ -112,10 +129,6 @@ implements SysUserService{
         Set<SysRole> sysRoles = sysRoleService.queryRoleAll();
         UserDto userDto = CopyUtil.copy(sysUser, UserDto.class);
         userDto.setRoleIds(roleIds);
-        if (sysRoles != null){
-            userDto.setRoles(sysRoles.stream().map(sysRole -> new SelectOption(sysRole.getRoleId(),sysRole.getRoleName())).collect(Collectors.toList()));
-        }
-
         return userDto;
     }
 

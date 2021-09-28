@@ -13,7 +13,13 @@ import java.util.Set;
 @Mapper
 public interface SysRoleMapper extends BaseMapper<SysRole> {
 
-    Set<String> queryRolesByUserId(Long userId);
+    Set<String> queryRoleKeysByUserId(Long userId);
+
+    Set<Long> queryRoleIdsByUserId(Long userId);
+
+    Set<SysRole> queryRolesByUserId(Long userId);
+
+    Set<SysRole> queryRoleAll();
 }
 
 

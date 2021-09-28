@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import cn.flowboot.system.domain.entity.SysRoleMenu;
 import cn.flowboot.system.service.SysRoleMenuService;
 import cn.flowboot.system.mapper.SysRoleMenuMapper;
+import org.assertj.core.util.Maps;
 import org.springframework.stereotype.Service;
 
 /**
@@ -17,9 +18,9 @@ implements SysRoleMenuService{
 
     @Override
     public void removeByRoleId(Long roleId) {
-        QueryWrapper<SysRoleMenu> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("role_id",roleId);
-        AssertUtil.isTrue(!remove(queryWrapper),"更新权限失败");
+        System.out.println(roleId);
+        boolean role_id = removeByMap(Maps.newHashMap("role_id", roleId));
+        System.out.println(role_id);
     }
 }
 

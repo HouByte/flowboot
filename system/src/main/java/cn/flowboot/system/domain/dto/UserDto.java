@@ -77,8 +77,6 @@ public class UserDto implements Serializable {
 
     private Set<Long> roleIds;
 
-    private List<SelectOption> roles;
-
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 }

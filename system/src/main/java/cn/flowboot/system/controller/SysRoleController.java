@@ -61,8 +61,15 @@ public class SysRoleController extends BaseController {
         return success(sysRole,RoleDto.class);
     }
 
+    /**
+     * 保存角色
+     * id 必须为空防止前端修改请求成添加
+     * @param roleDto
+     * @return
+     */
     @PostMapping("save")
     public AjaxResult save(@RequestBody RoleDto roleDto){
+        AssertUtil.isTrue(roleDto.getRoleId() != null,"系统错误");
         sysRoleService.saveOrUpdate(false,roleDto);
         return success();
     }

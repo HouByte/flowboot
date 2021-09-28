@@ -87,6 +87,9 @@ implements SysRoleService{
             //删除原有记录
             sysRoleMenuService.removeByRoleId(roleId);
         }
+        if (menuIds == null || menuIds.size() == 0){
+            return;
+        }
         //新增不需要删除，更新删除后添加
         List<SysRoleMenu> sysRoleMenus = menuIds.stream().map(menuId -> new SysRoleMenu(roleId, menuId)).collect(Collectors.toList());
         AssertUtil.isTrue(!sysRoleMenuService.saveBatch(sysRoleMenus),"授权失败");

@@ -45,12 +45,13 @@
       </el-table-column>
       <el-table-column align="center" prop="createTime" width="200" label="创建时间"/>
       <el-table-column align="center" prop="icon" width="360px" label="操作">
-        <template slot-scope="scope" v-if="scope.row.userId !== 1">
+        <template slot-scope="scope" >
+<!--          v-if="scope.row.userId !== 1"-->
           <el-button type="text" size="mini" icon="el-icon-edit" @click="handleEdit(scope.row.userId)">编辑</el-button>
           <el-divider direction="vertical"></el-divider>
           <template>
             <el-popconfirm title="这是一段内容确定删除吗？" @confirm="handleDelete(scope.row.userId)">
-              <el-button type="text" size="mini" icon="el-icon-delete" slot="reference">删除</el-button>
+              <el-button type="text" size="mini" icon="el-icon-delete" slot="reference" v-if="scope.row.userId !== 1">删除</el-button>
             </el-popconfirm>
           </template>
           <el-divider direction="vertical"></el-divider>
@@ -61,8 +62,6 @@
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item command="repassHandle(scope.row.userId, scope.row.username)" icon="el-icon-key"
                                 v-hasPermi="['system:user:resetPwd']">重置密码</el-dropdown-item>
-              <el-dropdown-item command="roleHandle(scope.row.userId)" icon="el-icon-circle-check"
-                                v-hasPermi="['system:user:edit']">分配角色</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </template>
@@ -158,7 +157,8 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="角色" >
-              <el-select v-model="editForm.roleIds" multiple placeholder="请选择" :disabled="editForm.userId === 1">
+              <el-tag v-show="editForm.userId === 1"> 超级管理员 </el-tag>
+              <el-select v-show="editForm.userId !== 1" v-model="editForm.roleIds" multiple placeholder="请选择" >
                 <el-option
                     v-for="item in roleOptions"
                     :key="item.roleId"
@@ -426,6 +426,7 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
+          this.editForm.roles=undefined
           saveUser(this.editForm.userId?'update' : 'save', this.editForm)
               .then(res => {
 
