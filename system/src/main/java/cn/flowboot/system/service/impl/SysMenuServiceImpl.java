@@ -3,7 +3,11 @@ package cn.flowboot.system.service.impl;
 import cn.flowboot.common.constant.Constants;
 import cn.flowboot.common.croe.domain.TreeSelect;
 import cn.flowboot.common.croe.domain.user.LoginUser;
+import cn.flowboot.common.exception.ParamsException;
 import cn.flowboot.common.utils.AssertUtil;
+import cn.flowboot.common.utils.CopyUtil;
+import cn.flowboot.common.utils.SecurityUtils;
+import cn.flowboot.system.domain.dto.MenuDto;
 import cn.flowboot.system.domain.vo.MenuNavVo;
 import cn.flowboot.system.domain.vo.MenuTree;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -41,7 +45,8 @@ implements SysMenuService{
     @Override
     public List<MenuNavVo> queryCurrentUserNav(LoginUser loginUser) {
         List<SysMenu> sysMenus = queryCurrentUserMenu(loginUser);
-        return buildMenuTree(sysMenus);
+        List<SysMenu> menuTree = buildMenuTree(sysMenus);
+        return toMenuNavList(menuTree);
     }
 
     @Override
@@ -50,47 +55,143 @@ implements SysMenuService{
     }
 
     @Override
-    public List<TreeSelect> queryMenuTrees() {
+    public List<TreeSelect> queryMenuTreeOptions() {
         List<SysMenu> sysMenus = querySelectList();
         if (sysMenus == null || sysMenus.size() == 0){
             return new ArrayList<>();
         }
-        List<MenuNavVo> menuNavVos = buildMenuTree(sysMenus);
+        List<SysMenu> menuTree = buildMenuTree(sysMenus);
 
-        return toTreeSelectList(menuNavVos);
+        return toTreeSelectList(menuTree);
     }
 
-    private List<TreeSelect> toTreeSelectList(List<MenuNavVo> menuNavVos) {
+    @Override
+    public List<SysMenu> queryMenuTrees() {
+        List<SysMenu> list = list();
+        return buildMenuTree(list);
+    }
+
+    @Override
+    public void saveOrUpdate(boolean update, MenuDto menuDto) {
+        SysMenu sysMenu = null;
+        //校验
+        verification(menuDto);
+
+        String operator = SecurityUtils.getUsername();
+        if (update){
+            sysMenu = getById(menuDto.getMenuId());
+            AssertUtil.isTrue(sysMenu == null,"更新数据不存在");
+            sysMenu = updateData(sysMenu,menuDto);
+            sysMenu.setUpdateBy(operator);
+        } else {
+            sysMenu = createData(menuDto);
+            sysMenu.setCreateBy(operator);
+
+        }
+
+        AssertUtil.isTrue(!saveOrUpdate(sysMenu),"保存失败");
+
+    }
+
+    private void verification(MenuDto menuDto) {
+        Long parentId = menuDto.getParentId();
+        if (parentId == null){
+            menuDto.setParentId(0L);
+        } else {
+            SysMenu sysMenu = getById(menuDto.getParentId());
+            AssertUtil.isTrue(sysMenu == null,"父级菜单不存在");
+        }
+        //根据菜单分别分类校验
+        switch (menuDto.getMenuType()){
+            case Constants.MenuType.MENU:
+                AssertUtil.isTrue(menuDto.getPath() == null,"路由地址不能为空");
+                if (menuDto.getIsFrame()){
+                    boolean isHttp = menuDto.getPath().startsWith("https://") || menuDto.getPath().startsWith("http://");
+                    AssertUtil.isTrue(!isHttp,"外网地址需内链访问则以`http(s)://`开头");
+                }
+                break;
+            case Constants.MenuType.CATALOG:
+                AssertUtil.isTrue(menuDto.getPath() == null,"路由地址不能为空");
+                if (!menuDto.getIsFrame()){
+                    AssertUtil.isTrue(menuDto.getComponent() == null,"组件地址不存在");
+                } else {
+                    boolean isHttp = menuDto.getPath().startsWith("https://") || menuDto.getPath().startsWith("http://");
+                    AssertUtil.isTrue(!isHttp,"外网地址需内链访问则以`http(s)://`开头");
+                }
+                break;
+            case Constants.MenuType.FUNCTION:
+                break;
+            default:
+                throw new ParamsException("类型错误");
+        }
+    }
+
+    private SysMenu createData(MenuDto menuDto) {
+        SysMenu temp = CopyUtil.copy(menuDto, SysMenu.class);
+        temp.setCreateTime(new Date());
+        temp.setUpdateTime(new Date());
+        return temp;
+    }
+
+    private SysMenu updateData(SysMenu sysMenu, MenuDto menuDto) {
+        SysMenu temp = CopyUtil.copy(menuDto, SysMenu.class);
+        temp.setMenuId(sysMenu.getMenuId());
+        temp.setCreateBy(sysMenu.getCreateBy());
+        temp.setCreateTime(sysMenu.getCreateTime());
+        temp.setUpdateTime(new Date());
+        return temp;
+    }
+
+    private List<MenuNavVo> toMenuNavList(List<SysMenu> sysMenus) {
+        if (sysMenus == null || sysMenus.size() == 0){
+            return null;
+        }
+        return sysMenus.stream().map(this::toMenuNavVo).collect(Collectors.toList());
+    }
+
+    private List<TreeSelect> toTreeSelectList(List<SysMenu> menuNavVos) {
         if (menuNavVos == null || menuNavVos.size() == 0){
             return null;
         }
         return menuNavVos.stream().map(this::toTreeSelect).collect(Collectors.toList());
     }
 
-    private TreeSelect toTreeSelect(MenuNavVo menuNavVo){
-        if (menuNavVo == null){
+    private TreeSelect toTreeSelect(SysMenu sysMenu){
+        if (sysMenu == null){
             return null;
         }
         return TreeSelect.builder()
-                .id(menuNavVo.getId())
-                .label(menuNavVo.getTitle())
-                .children(toTreeSelectList(menuNavVo.getChildren()))
+                .id(sysMenu.getMenuId())
+                .label(sysMenu.getMenuName())
+                .children(toTreeSelectList(sysMenu.getChildren()))
                 .build();
     }
 
-
-    private List<MenuNavVo> buildMenuTree(List<SysMenu> sysMenus) {
-        List<MenuNavVo> menus = sysMenus.stream().map(sysMenu -> menuToVo(sysMenu)).collect(Collectors.toList());
-
-        List<MenuNavVo> returnList = new ArrayList<MenuNavVo>();
-        List<Long> tempList = new ArrayList<Long>();
-        for (MenuNavVo dept : menus) {
-            tempList.add(dept.getId());
+    private MenuNavVo toMenuNavVo(SysMenu sysMenu){
+        if (sysMenu == null){
+            return null;
         }
-        for (Iterator<MenuNavVo> iterator = menus.iterator(); iterator.hasNext();) {
-            MenuNavVo menu = (MenuNavVo) iterator.next();
+        MenuNavVo menuNavVo = CopyUtil.copy(sysMenu, MenuNavVo.class);
+        menuNavVo.setTitle(sysMenu.getMenuName());
+        menuNavVo.setName(sysMenu.getPath());
+        menuNavVo.setId(sysMenu.getMenuId());
+        menuNavVo.setChildren(toMenuNavList(sysMenu.getChildren()));
+        return menuNavVo;
+    }
+
+
+    private List<SysMenu> buildMenuTree(List<SysMenu> menus) {
+        //List<MenuNavVo> menus = sysMenus.stream().map(sysMenu -> menuToVo(sysMenu)).collect(Collectors.toList());
+
+        List<SysMenu> returnList = new ArrayList<SysMenu>();
+        List<Long> tempList = new ArrayList<Long>();
+        for (SysMenu dept : menus) {
+            tempList.add(dept.getMenuId());
+        }
+        for (Iterator<SysMenu> iterator = menus.iterator(); iterator.hasNext();) {
+            SysMenu menu = (SysMenu) iterator.next();
             // 如果是顶级节点, 遍历该父节点的所有子节点
-            if (!tempList.contains(menu.getPid())) {
+            if (!tempList.contains(menu.getParentId())) {
                 recursionFn(menus, menu);
                 returnList.add(menu);
             }
@@ -107,11 +208,11 @@ implements SysMenuService{
      * @param list
      * @param menu
      */
-    private void recursionFn(List<MenuNavVo> list, MenuNavVo menu) {
+    private void recursionFn(List<SysMenu> list, SysMenu menu) {
         // 得到子节点列表
-        List<MenuNavVo> childList = getChildList(list, menu);
+        List<SysMenu> childList = getChildList(list, menu);
         menu.setChildren(childList);
-        for (MenuNavVo tChild : childList) {
+        for (SysMenu tChild : childList) {
             if (hasChild(list, tChild)) {
                 recursionFn(list, tChild);
             }
@@ -121,12 +222,12 @@ implements SysMenuService{
     /**
      * 得到子节点列表
      */
-    private List<MenuNavVo> getChildList(List<MenuNavVo> list, MenuNavVo t) {
-        List<MenuNavVo> tlist = new ArrayList<MenuNavVo>();
-        Iterator<MenuNavVo> it = list.iterator();
+    private List<SysMenu> getChildList(List<SysMenu> list, SysMenu t) {
+        List<SysMenu> tlist = new ArrayList<SysMenu>();
+        Iterator<SysMenu> it = list.iterator();
         while (it.hasNext()) {
-            MenuNavVo n = (MenuNavVo) it.next();
-            if (n.getPid().longValue() == t.getId().longValue()) {
+            SysMenu n = (SysMenu) it.next();
+            if (n.getParentId().longValue() == t.getMenuId().longValue()) {
                 tlist.add(n);
             }
         }
@@ -136,14 +237,13 @@ implements SysMenuService{
     /**
      * 判断是否有子节点
      */
-    private boolean hasChild(List<MenuNavVo> list, MenuNavVo t) {
+    private boolean hasChild(List<SysMenu> list, SysMenu t) {
         return getChildList(list, t).size() > 0 ? true : false;
     }
 
     private MenuNavVo menuToVo(SysMenu sysMenu){
         return MenuNavVo.builder()
                 .id(sysMenu.getMenuId())
-                .pid(sysMenu.getParentId())
                 .title(sysMenu.getMenuName())
                 .isCache(sysMenu.getIsCache())
                 .isFrame(sysMenu.getIsFrame())

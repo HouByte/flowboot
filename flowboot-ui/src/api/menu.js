@@ -18,14 +18,12 @@ export function deleteById(id) {
     return ajax.post("/sys/menu/delete/"+id);
 }
 
+export function getMenuTreeOptions() {
+    return ajax.get("/sys/menu/treeOptions");
+}
 export function getMenuTrees() {
     return ajax.get("/sys/menu/tree");
 }
-
-export function getMenuTreeList() {
-    return ajax.get("/sys/menu/list");
-}
-
 export function saveMenu(action,data){
     return ajax.postJson("/sys/menu/"+action,data);
 }

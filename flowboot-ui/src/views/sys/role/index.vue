@@ -102,9 +102,7 @@
           <el-input-number v-model="editForm.roleSort" controls-position="right" :min="0" />
         </el-form-item>
         <el-form-item label="状态">
-          <el-radio-group v-model="editForm.status">
-            <el-switch v-model="editForm.status" @change="handleStatusChange(scope.row)"/>
-          </el-radio-group>
+          <el-switch v-model="editForm.status" @change="handleStatusChange(scope.row)"/>
         </el-form-item>
         <el-form-item label="菜单权限">
           <el-checkbox v-model="menuExpand" @change="handleCheckedTreeExpand($event, 'menu')">展开/折叠</el-checkbox>
@@ -137,7 +135,7 @@
 
 <script>
 import {getRoleById, getRoleList, saveRole, updatePerm, deleteRoleById } from "@/api/role";
-import {getMenuTrees,getMenuTreeselect} from "@/api/menu";
+import {getMenuTreeOptions,getMenuTreeselect} from "@/api/menu";
 
 export default {
   name: "Role",
@@ -166,7 +164,15 @@ export default {
       tableData: [],
 
       editFormRules: {
-
+        roleName: [
+          { required: true, message: "角色名称不能为空", trigger: "blur" }
+        ],
+        roleKey: [
+          { required: true, message: "权限字符不能为空", trigger: "blur" }
+        ],
+        roleSort: [
+          { required: true, message: "角色顺序不能为空", trigger: "blur" }
+        ]
       },
 
       multipleSelection: [],
@@ -179,7 +185,7 @@ export default {
   created() {
     this.getRoleList()
 
-    getMenuTrees().then(res => {
+    getMenuTreeOptions().then(res => {
       this.menuOptions = res
     })
   },

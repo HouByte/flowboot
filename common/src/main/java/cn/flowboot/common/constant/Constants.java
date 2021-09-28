@@ -147,4 +147,11 @@ public class Constants {
 
     /** 管理员角色权限标识 */
     public static final String SUPER_ADMIN = "admin";
+
+    public static interface MenuType {
+        //M目录 C菜单 F按钮
+        String MENU = "M";
+        String CATALOG ="C";
+        String FUNCTION = "F";
+    }
 }

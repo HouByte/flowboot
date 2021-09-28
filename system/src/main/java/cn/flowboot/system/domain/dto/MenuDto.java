@@ -1,22 +1,23 @@
-package cn.flowboot.system.domain.entity;
+package cn.flowboot.system.domain.dto;
 
 import cn.flowboot.common.croe.domain.BaseEntity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.util.List;
-
-import lombok.Data;
 
 /**
  * 菜单权限表
  * @TableName sys_menu
  */
-@TableName(value ="sys_menu")
 @Data
-public class SysMenu extends BaseEntity implements Serializable {
+public class MenuDto implements Serializable {
     /**
      * 菜单ID
      */
@@ -26,6 +27,7 @@ public class SysMenu extends BaseEntity implements Serializable {
     /**
      * 菜单名称
      */
+    @NotBlank(message = "菜单名称不能为空")
     private String menuName;
 
     /**
@@ -36,6 +38,7 @@ public class SysMenu extends BaseEntity implements Serializable {
     /**
      * 显示顺序
      */
+    @NotBlank(message = "排序值不能为空")
     private Integer orderNum;
 
     /**
@@ -61,6 +64,8 @@ public class SysMenu extends BaseEntity implements Serializable {
     /**
      * 菜单类型（M目录 C菜单 F按钮）
      */
+    @NotBlank(message = "菜单类型必须选择")
+    @Pattern(regexp = "^[MCF]$",message = "非法请求")
     private String menuType;
 
     /**
@@ -84,22 +89,12 @@ public class SysMenu extends BaseEntity implements Serializable {
     private String icon;
 
     /**
-     * 创建者
-     */
-    private String createBy;
-
-    /**
-     * 更新者
-     */
-    private String updateBy;
-
-    /**
      * 备注
      */
     private String remark;
 
     @TableField(exist = false)
-    private List<SysMenu> children;
+    private List<MenuDto> children;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

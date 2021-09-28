@@ -53,8 +53,9 @@ axios.interceptors.response.use(response => {
         router.push("/403")
     } else if (error.response.status === 404){
         router.push("/404")
-    } else if (error.response.status === 500){
-        router.push("/500?msg="+error.message)
+    } else {
+        console.log("ajax err ",error)
+        Message.error(error.message);
     }
     return Promise.reject(error.response);
 })

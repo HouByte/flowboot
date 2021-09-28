@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import {updatePass,getUserInfo} from "@/api/user"
+import {updatePass} from "@/api/user"
 export default {
   name: "RePassword",
   data() {
@@ -36,7 +36,7 @@ export default {
     };
     return {
       userInfo: {
-
+        username :  'hello '
       },
       passForm: {
         password: '',
@@ -62,9 +62,9 @@ export default {
   },
   methods: {
     getUserInfo() {
-      getUserInfo().then(res => {
-        this.userInfo = res;
-      })
+      // getUserInfo().then(res => {
+      //   this.userInfo = res;
+      // })
     },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {

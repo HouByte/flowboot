@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -26,16 +27,19 @@ public class RoleDto implements Serializable {
     /**
      * 角色名称
      */
+    @NotBlank(message = "角色不能为空")
     private String roleName;
 
     /**
      * 角色权限字符串
      */
+    @NotBlank(message = "角色权限字符串不能为空")
     private String roleKey;
 
     /**
      * 显示顺序
      */
+    @NotBlank(message = "排序不能为空")
     private Integer roleSort;
 
     /**
