@@ -19,6 +19,10 @@ export function updatePerm(id,menuIds) {
     return ajax.post("/sys/role/perm/"+id,menuIds);
 }
 
+export function updateRoleStatus(id,data){
+    return ajax.postForm('/sys/role/update/status/'+id, {status:data});
+}
+
 export function getRoleList(data) {
     return ajax.get("/sys/role/list",data);
 }

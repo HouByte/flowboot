@@ -5,10 +5,8 @@ import cn.flowboot.common.croe.domain.AjaxResult;
 import cn.flowboot.common.croe.domain.BaseDelete;
 import cn.flowboot.common.croe.domain.user.LoginUser;
 import cn.flowboot.common.utils.AssertUtil;
-import cn.flowboot.common.utils.SecurityUtils;
 import cn.flowboot.system.domain.dto.UserDto;
-import cn.flowboot.system.domain.dto.UserQuery;
-import cn.flowboot.system.domain.entity.SysUser;
+import cn.flowboot.system.domain.query.UserQuery;
 import cn.flowboot.system.domain.vo.UserBaseVo;
 import cn.flowboot.system.domain.vo.UserVo;
 import cn.flowboot.system.service.SysUserService;
@@ -19,6 +17,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -67,22 +66,23 @@ public class SysUserController extends BaseController {
     }
 
     @PostMapping("save")
-    public AjaxResult save(@RequestBody UserDto userDto){
+    public AjaxResult save(@Valid @RequestBody UserDto userDto){
         sysUserService.saveOrUpdate(false,userDto);
         return success();
     }
 
     @PostMapping("update")
-    public AjaxResult update(@RequestBody UserDto userDto){
+    public AjaxResult update(@Valid @RequestBody UserDto userDto){
         AssertUtil.isTrue(userDto.getUserId() == null,"更新数据不存在");
         sysUserService.saveOrUpdate(true,userDto);
         return success();
     }
 
-    @PostMapping("delete")
-    public AjaxResult delete(@RequestBody BaseDelete baseDelete){
-        AssertUtil.isTrue(baseDelete == null || baseDelete.getIds() == null || baseDelete.getIds().size() == 0,"请选择删除数据");
-        AssertUtil.isTrue(!sysUserService.removeByIds(baseDelete.getIds()),"删除失败");
+
+    @PostMapping("update/status/{id}")
+    public AjaxResult updateStatus(@PathVariable("id")Long id,Boolean status){
+        AssertUtil.isTrue(status == null,"系统异常");
+        sysUserService.updateStatus(id,status);
         return success();
     }
 

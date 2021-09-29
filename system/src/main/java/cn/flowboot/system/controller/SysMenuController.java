@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -59,16 +60,30 @@ public class SysMenuController extends BaseController {
      * @return
      */
     @PostMapping("save")
-    public AjaxResult save(@RequestBody MenuDto menuDto){
+    public AjaxResult save(@Valid @RequestBody MenuDto menuDto){
         AssertUtil.isTrue(menuDto.getMenuId() != null,"系统错误");
         sysMenuService.saveOrUpdate(false,menuDto);
         return success();
     }
 
     @PostMapping("update")
-    public AjaxResult update(@RequestBody MenuDto menuDto){
+    public AjaxResult update(@Valid @RequestBody MenuDto menuDto){
         AssertUtil.isTrue(menuDto.getMenuId() == null,"更新数据不存在");
         sysMenuService.saveOrUpdate(true,menuDto);
+        return success();
+    }
+
+    @PostMapping("delete/{id}")
+    public AjaxResult delete(@PathVariable Long id){
+
+        sysMenuService.deleteMenu(id);
+        return success();
+    }
+
+    @PostMapping("update/status/{id}")
+    public AjaxResult updateStatus(@PathVariable("id")Long id,Boolean status){
+        AssertUtil.isTrue(status == null,"系统异常");
+        sysMenuService.updateStatus(id,status);
         return success();
     }
 }

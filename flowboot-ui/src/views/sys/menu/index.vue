@@ -53,7 +53,10 @@
       <el-table-column prop="component" label="菜单组件"/>
       <el-table-column prop="status" label="状态" align="center" width="80">
         <template slot-scope="scope">
-          <el-switch v-model="scope.row.status" @change="handleStatusChange(scope.row,scope.row.status)"/>
+          <el-popconfirm :title="'确定'+(scope.row.status?'启用':'停用')+'吗？'" @confirm="handleStatusChange(scope.row)">
+            <el-switch v-model="scope.row.status" slot="reference">
+            </el-switch>
+          </el-popconfirm>
         </template>
       </el-table-column>
       <el-table-column prop="icon" label="操作" align="center" width="280">
@@ -62,7 +65,7 @@
           <el-divider direction="vertical"></el-divider>
 
           <template>
-            <el-popconfirm title="这是一段内容确定删除吗？" @confirm="handleDelete(scope.row.id)">
+            <el-popconfirm title="这是一段内容确定删除吗？" @confirm="handleDelete(scope.row)">
               <el-button type="text" slot="reference">删除</el-button>
             </el-popconfirm>
           </template>
@@ -74,12 +77,12 @@
 
     <!-- 添加或修改菜单对话框 -->
     <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" width="680px" append-to-body>
-      <el-form ref="editForm" :model="editForm" :rules="editFormRules" label-width="100px">
+      <el-form ref="form" :model="form" :rules="formRules" label-width="100px">
         <el-row>
           <el-col :span="24">
             <el-form-item label="上级菜单">
               <treeselect
-                  v-model="editForm.parentId"
+                  v-model="form.parentId"
                   :options="menuOptions"
 
                   :show-count="true"
@@ -90,7 +93,7 @@
           </el-col>
           <el-col :span="24">
             <el-form-item label="菜单类型" prop="menuType">
-              <el-radio-group v-model="editForm.menuType">
+              <el-radio-group v-model="form.menuType">
                 <el-radio label="M">目录</el-radio>
                 <el-radio label="C">菜单</el-radio>
                 <el-radio label="F">按钮</el-radio>
@@ -98,43 +101,43 @@
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item v-if="editForm.menuType !== 'F'" label="菜单图标">
-              <icon-picker v-model="editForm.icon"></icon-picker>
+            <el-form-item v-if="form.menuType !== 'F'" label="菜单图标">
+              <icon-picker v-model="form.icon"></icon-picker>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="菜单名称" prop="menuName">
-              <el-input v-model="editForm.menuName" placeholder="请输入菜单名称" />
+              <el-input v-model="form.menuName" placeholder="请输入菜单名称" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="显示排序" prop="orderNum">
-              <el-input-number v-model="editForm.orderNum" controls-position="right" :min="0" />
+              <el-input-number v-model="form.orderNum" controls-position="right" :min="0" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item v-if="editForm.menuType != 'F'">
+            <el-form-item v-if="form.menuType != 'F'">
               <span slot="label">
                 <el-tooltip content="选择是外链则路由地址需要以`http(s)://`开头" placement="top">
                 <i class="el-icon-question"></i>
                 </el-tooltip>
                 是否外链
               </span>
-              <el-switch v-model="editForm.isFrame" />
+              <el-switch v-model="form.isFrame" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item v-if="editForm.menuType != 'F'" prop="path">
+            <el-form-item v-if="form.menuType != 'F'" prop="path">
               <span slot="label">
                 <el-tooltip content="访问的路由地址，如：`user`，如外网地址需内链访问则以`http(s)://`开头" placement="top">
                 <i class="el-icon-question"></i>
                 </el-tooltip>
                 路由地址
               </span>
-              <el-input v-model="editForm.path" placeholder="请输入路由地址" />
+              <el-input v-model="form.path" placeholder="请输入路由地址" />
             </el-form-item>
           </el-col>
-          <el-col :span="12" v-if="editForm.menuType == 'C'">
+          <el-col :span="12" v-if="form.menuType == 'C'">
             <el-form-item prop="component">
               <span slot="label">
                 <el-tooltip content="访问的组件路径，如：`system/user/index`，默认在`views`目录下" placement="top">
@@ -142,12 +145,12 @@
                 </el-tooltip>
                 组件路径
               </span>
-              <el-input v-model="editForm.component" placeholder="请输入组件路径" />
+              <el-input v-model="form.component" placeholder="请输入组件路径" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item v-if="editForm.menuType != 'M'">
-              <el-input v-model="editForm.perms" placeholder="请输入权限标识" maxlength="100" />
+            <el-form-item v-if="form.menuType != 'M'">
+              <el-input v-model="form.perms" placeholder="请输入权限标识" maxlength="100" />
               <span slot="label">
                 <el-tooltip content="控制器中定义的权限字符，如：@PreAuthorize(`@ss.hasPermi('system:user:list')`)" placement="top">
                 <i class="el-icon-question"></i>
@@ -157,7 +160,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item v-if="editForm.menuType != 'F'">
+            <el-form-item v-if="form.menuType != 'F'">
               <span slot="label">
                 <el-tooltip content="选择隐藏则路由将不会出现在侧边栏，但仍然可以访问" placement="top">
                 <i class="el-icon-question"></i>
@@ -165,35 +168,35 @@
                 显示状态
               </span>
 
-                <el-switch v-model="editForm.visible" />
+                <el-switch v-model="form.visible" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item v-if="editForm.menuType != 'F'">
+            <el-form-item v-if="form.menuType != 'F'">
               <span slot="label">
                 <el-tooltip content="选择停用则路由将不会出现在侧边栏，也不能被访问" placement="top">
                 <i class="el-icon-question"></i>
                 </el-tooltip>
                 菜单状态
               </span>
-              <el-switch v-model="editForm.status" />
+              <el-switch v-model="form.status" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item v-if="editForm.menuType == 'C'">
+            <el-form-item v-if="form.menuType == 'C'">
               <span slot="label">
                 <el-tooltip content="选择是则会被`keep-alive`缓存，需要匹配组件的`name`和地址保持一致" placement="top">
                 <i class="el-icon-question"></i>
                 </el-tooltip>
                 是否缓存
               </span>
-              <el-switch v-model="editForm.isCache" />
+              <el-switch v-model="form.isCache" />
             </el-form-item>
           </el-col>
         </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm('editForm')">确 定</el-button>
+        <el-button type="primary" @click="submitForm('form')">确 定</el-button>
         <el-button @click="handleClose">取 消</el-button>
       </div>
     </el-dialog>
@@ -203,9 +206,10 @@
 </template>
 
 <script>
-import {deleteById, getMenuById, getMenuTreeOptions, getMenuTrees, saveMenu} from "@/api/menu";
+import {deleteById, getMenuById, getMenuTreeOptions, getMenuTrees, saveMenu, updateMenuStatus} from "@/api/menu";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+import {updateRoleStatus} from "@/api/role";
 
 export default {
   name: "Menu",
@@ -216,7 +220,7 @@ export default {
     return {
       dialogVisible: false,
       dialogTitle:'',
-      editForm: {
+      form: {
         component: '',
         icon: '#',
         isCache: false,
@@ -231,7 +235,7 @@ export default {
         status: true,
         visible: true
       },
-      editFormRules: {
+      formRules: {
         menuName: [
           { required: true, message: "菜单名称不能为空", trigger: "blur" }
         ],
@@ -270,7 +274,7 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          saveMenu(this.editForm.menuId?'update' : 'save', this.editForm)
+          saveMenu(this.form.menuId?'update' : 'save', this.form)
               .then(res => {
 
                 this.$message({
@@ -300,15 +304,15 @@ export default {
     handleAdd(){
       this.resetForm()
       console.log(this.currentSelectRowId)
-      this.editForm.parentId = this.currentSelectRowId
+      this.form.parentId = this.currentSelectRowId
       this.dialogVisible = true
     },
     handleEdit(row) {
-      this.editForm = row
+      this.form = row
       this.dialogVisible = true
     },
     resetForm() {
-      this.editForm ={
+      this.form ={
         component: '',
         icon: '#',
         isCache: false,
@@ -327,10 +331,18 @@ export default {
     },
 
     handleClose() {
-      this.resetForm('editForm')
+      this.resetForm('form')
     },
-    handleDelete(id) {
-      deleteById(id).then(res => {
+    handleDelete(row) {
+      if (row.children&& row.children.length > 0){
+        this.$message({
+          showClose:true,
+          message:"存在子节点不能删除",
+          type:"error"
+        })
+        return
+      }
+      deleteById(row.menuId).then(res => {
         this.$message({
           showClose: true,
           message: '恭喜你，操作成功',
@@ -341,20 +353,6 @@ export default {
         });
 
       })
-    },
-    handleStatusChange (row,on){
-
-      let text = row.status === true ? "启用" : "停用";
-      this.$confirm('确认要"' + text + '""' + row.menuName + '"菜单吗?', "警告", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
-      }).then(() => {
-
-      }).catch(function() {
-        row.status = row.status === true ? false : true;
-      });
-
     },
     handleExpand(){
       this.refreshTable = false;
@@ -370,7 +368,28 @@ export default {
       this.$nextTick(() => {
         this.refreshTable = true;
       });
-    }
+    },
+    handleStatusChange(row){
+      if (row.children&& row.children.length > 0){
+        this.$message({
+          showClose:true,
+          message:"存在子节点当前版本不能关闭",
+          type:"error"
+        })
+        row.status = !row.status
+        return
+      }
+      updateMenuStatus(row.menuId,row.status).then(res=>{
+        this.$message({
+          showClose: true,
+          message: '恭喜你，操作成功',
+          type: 'success',
+          onClose: () => {
+            this.getMenuTree()
+          }
+        });
+      })
+    },
   }
 }
 </script>

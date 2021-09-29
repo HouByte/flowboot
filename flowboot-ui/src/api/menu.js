@@ -27,3 +27,7 @@ export function getMenuTrees() {
 export function saveMenu(action,data){
     return ajax.postJson("/sys/menu/"+action,data);
 }
+
+export function updateMenuStatus(id,data){
+    return ajax.postForm('/sys/menu/update/status/'+id, {status:data});
+}

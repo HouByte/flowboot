@@ -35,7 +35,10 @@
       <el-table-column label="创建时间" align="center" prop="createTime" width="180"/>
       <el-table-column label="状态" align="center" prop="status" width="120">
         <template slot-scope="scope">
-          <el-switch v-model="scope.row.status" @change="handleStatusChange(scope.row)"/>
+          <el-popconfirm :title="'确定'+(scope.row.status?'启用':'停用')+'吗？'" @confirm="handleStatusChange(scope.row)">
+            <el-switch v-model="scope.row.status" slot="reference">
+            </el-switch>
+          </el-popconfirm>
         </template>
       </el-table-column>
 
@@ -49,7 +52,7 @@
               v-hasPermi="['system:role:edit']"
           >修改</el-button>
 
-          <el-popconfirm title="这是一段内容确定删除吗？" @confirm="handleDelete(scope.row.roleId)">
+          <el-popconfirm title="确定删除吗？" @confirm="handleDelete(scope.row.roleId)">
             <el-button size="mini" icon="el-icon-delete"  type="text" slot="reference" v-hasPermi="['system:role:remove']">删除</el-button>
           </el-popconfirm>
 <!--          <el-dropdown size="mini" @command="(command) => handleCommand(command, scope.row)" v-hasPermi="['system:role:edit']">-->
@@ -85,9 +88,9 @@
         width="600px"
         :before-close="handleClose">
 
-      <el-form ref="editForm" :model="editForm" :rules="editFormRules" label-width="100px" class="demo-editForm">
+      <el-form ref="form" :model="form" :rules="formRules" label-width="100px" class="demo-form">
         <el-form-item label="角色名称" prop="roleName">
-          <el-input v-model="editForm.roleName" placeholder="请输入角色名称" />
+          <el-input v-model="form.roleName" placeholder="请输入角色名称" />
         </el-form-item>
         <el-form-item prop="roleKey">
           <span slot="label">
@@ -96,35 +99,35 @@
             </el-tooltip>
             权限字符
           </span>
-          <el-input v-model="editForm.roleKey" placeholder="请输入权限字符" />
+          <el-input v-model="form.roleKey" placeholder="请输入权限字符" />
         </el-form-item>
         <el-form-item label="角色顺序" prop="roleSort">
-          <el-input-number v-model="editForm.roleSort" controls-position="right" :min="0" />
+          <el-input-number v-model="form.roleSort" controls-position="right" :min="0" />
         </el-form-item>
         <el-form-item label="状态">
-          <el-switch v-model="editForm.status" @change="handleStatusChange(scope.row)"/>
+          <el-switch v-model="form.status" @change="handleStatusChange(scope.row)"/>
         </el-form-item>
         <el-form-item label="菜单权限">
           <el-checkbox v-model="menuExpand" @change="handleCheckedTreeExpand($event, 'menu')">展开/折叠</el-checkbox>
           <el-checkbox v-model="menuNodeAll" @change="handleCheckedTreeNodeAll($event, 'menu')">全选/全不选</el-checkbox>
-          <el-checkbox v-model="editForm.menuCheckStrictly" @change="handleCheckedTreeConnect($event, 'menu')">父子联动</el-checkbox>
+          <el-checkbox v-model="form.menuCheckStrictly" @change="handleCheckedTreeConnect($event, 'menu')">父子联动</el-checkbox>
           <el-tree
               class="tree-border"
               :data="menuOptions"
               show-checkbox
               ref="menu"
               node-key="id"
-              :check-strictly="!editForm.menuCheckStrictly"
+              :check-strictly="!form.menuCheckStrictly"
               empty-text="加载中，请稍后"
               :props="defaultProps"
           ></el-tree>
         </el-form-item>
         <el-form-item label="备注">
-          <el-input v-model="editForm.remark" type="textarea" placeholder="请输入内容"></el-input>
+          <el-input v-model="form.remark" type="textarea" placeholder="请输入内容"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm('editForm')">确 定</el-button>
+        <el-button type="primary" @click="submitForm('form')">确 定</el-button>
         <el-button @click="handleClose">取 消</el-button>
       </div>
     </el-dialog>
@@ -134,8 +137,9 @@
 </template>
 
 <script>
-import {getRoleById, getRoleList, saveRole, updatePerm, deleteRoleById } from "@/api/role";
+import {getRoleById, getRoleList, saveRole, updatePerm, deleteRoleById, updateRoleStatus} from "@/api/role";
 import {getMenuTreeOptions,getMenuTreeselect} from "@/api/menu";
+import {updateUserStatus} from "@/api/user";
 
 export default {
   name: "Role",
@@ -150,7 +154,7 @@ export default {
 
       dialogVisible: false,
       dialogTitle:'',
-      editForm: {
+      form: {
         status:true
       },
       menuExpand:false,
@@ -163,7 +167,7 @@ export default {
       loading:false,
       tableData: [],
 
-      editFormRules: {
+      formRules: {
         roleName: [
           { required: true, message: "角色名称不能为空", trigger: "blur" }
         ],
@@ -233,20 +237,20 @@ export default {
     resetForm(formName) {
       this.$refs[formName].resetFields();
       this.dialogVisible = false
-      this.editForm = {}
+      this.form = {}
       this.menuNodeAll = false;
       this.menuExpand = false;
       this.handleCheckedTreeNodeAll(null,'menu');
     },
     handleClose() {
-      this.resetForm('editForm')
+      this.resetForm('form')
     },
 
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          this.editForm.menuIds = this.getMenuAllCheckedKeys();
-          saveRole(this.editForm.roleId?'update' : 'save', this.editForm)
+          this.form.menuIds = this.getMenuAllCheckedKeys();
+          saveRole(this.form.roleId?'update' : 'save', this.form)
               .then(res => {
 
                 this.$message({
@@ -272,7 +276,7 @@ export default {
     },
 
     handleUpdate(row) {
-      this.editForm = row
+      this.form = row
       this.dialogTitle = "编辑"
       this.dialogVisible = true
       getMenuTreeselect(row.roleId).then(res=>{
@@ -346,34 +350,20 @@ export default {
       checkedKeys.unshift.apply(checkedKeys, halfCheckedKeys);
       return checkedKeys;
     },
-    permHandle(id) {
-      this.permDialogVisible = true
-
-      getRoleById(id).then(res => {
-
-        this.$refs.permTree.setCheckedKeys(res.menuIds)
-        this.permForm = res
-      })
-    },
-
-    submitPermFormHandle(formName) {
-      var menuIds = this.$refs.permTree.getCheckedKeys()
-
-      console.log(menuIds)
-
-      updatePerm(this.permForm.id, menuIds).then(res => {
+    handleStatusChange(row){
+      updateRoleStatus(row.roleId,row.status).then(res=>{
         this.$message({
           showClose: true,
           message: '恭喜你，操作成功',
           type: 'success',
-          onClose:() => {
+          onClose: () => {
             this.getRoleList()
           }
         });
-        this.permDialogVisible = false
-        this.resetForm(formName)
       })
-    }
+    },
+
+
   }
 }
 </script>

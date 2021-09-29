@@ -23,4 +23,6 @@ public interface SysRoleService extends IService<SysRole> {
     List<SysRole> queryList(String keyword);
 
     void saveOrUpdate(boolean update, RoleDto roleDto);
+
+    void updateStatus(Long id, Boolean status);
 }

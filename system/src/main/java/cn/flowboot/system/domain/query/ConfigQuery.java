@@ -1,4 +1,4 @@
-package cn.flowboot.system.domain.dto;
+package cn.flowboot.system.domain.query;
 
 import cn.flowboot.common.croe.domain.BaseQuery;
 import lombok.AllArgsConstructor;
@@ -15,6 +15,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class UserQuery extends BaseQuery {
-    private String keyword;
+public class ConfigQuery extends BaseQuery {
+    private String configName;
+    private String configKey;
+    private String configValue;
 }

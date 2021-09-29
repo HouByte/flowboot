@@ -82,6 +82,14 @@ implements SysRoleService{
         relationMenu(update,sysRole.getRoleId(),roleDto.getMenuIds());
     }
 
+    @Override
+    public void updateStatus(Long id, Boolean status) {
+        SysRole sysRole = getById(id);
+        AssertUtil.isTrue(sysRole == null,"更新角色不存在");
+        sysRole.setStatus(status);
+        updateById(sysRole);
+    }
+
     private void relationMenu(Boolean update,Long roleId,List<Long> menuIds){
         if (update){
             //删除原有记录

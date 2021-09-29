@@ -19,7 +19,7 @@
       </el-form-item>
       <el-form-item>
         <el-popconfirm title="这是确定批量删除吗？" @confirm="handleDelete(null)">
-          <el-button type="danger" icon="el-icon-delete" slot="reference" :disabled="delBtlStatu" >批量删除</el-button>
+          <el-button type="danger" icon="el-icon-delete" slot="reference" :disabled="delBtlStatus" >批量删除</el-button>
         </el-popconfirm>
       </el-form-item>
     </el-form>
@@ -39,8 +39,11 @@
       <el-table-column align="center" prop="remark" label="备注"/>
       <el-table-column align="center" prop="status" width="70" label="状态">
         <template slot-scope="scope">
-          <el-switch v-model="scope.row.status">
-          </el-switch>
+
+          <el-popconfirm :title="'确定'+(scope.row.status?'启用':'停用')+'吗？'" @confirm="handleStatusChange(scope.row)">
+            <el-switch v-model="scope.row.status" slot="reference">
+            </el-switch>
+          </el-popconfirm>
          </template>
       </el-table-column>
       <el-table-column align="center" prop="createTime" width="200" label="创建时间"/>
@@ -69,61 +72,58 @@
 
     </el-table>
 
-    <el-pagination
+    <pagination
         v-show="total>0"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        layout="total, sizes, prev, pager, next, jumper"
-        :page-sizes="[10, 20, 50, 100]"
-        :current-page="current"
-        :page-size="size"
-        :total="total">
-    </el-pagination>
+        :total="total"
+        :page.sync="searchForm.pageNum"
+        :limit.sync="searchForm.pageSize"
+        @pagination="getUserList"
+    />
 
 
     <!-- 添加或修改参数配置对话框 -->
     <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" width="600px" append-to-body>
-      <el-form ref="editForm" :model="editForm" :rules="editFormRules" label-width="80px">
+      <el-form ref="form" :model="form" :rules="formRules" label-width="80px">
         <el-row>
           <el-col :span="12">
             <el-form-item label="用户昵称" prop="nickName">
-              <el-input v-model="editForm.nickName" placeholder="请输入用户昵称" maxlength="30" />
+              <el-input v-model="form.nickName" placeholder="请输入用户昵称" maxlength="30" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="归属部门" prop="deptId">
-              <treeselect v-model="editForm.deptId" :options="deptOptions" :show-count="true" placeholder="请选择归属部门" />
+              <treeselect v-model="form.deptId" :options="deptOptions" :show-count="true" placeholder="请选择归属部门" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
             <el-form-item label="手机号码" prop="phone">
-              <el-input v-model="editForm.phone" placeholder="请输入手机号码" maxlength="11" />
+              <el-input v-model="form.phone" placeholder="请输入手机号码" maxlength="11" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="邮箱" prop="email">
-              <el-input v-model="editForm.email" placeholder="请输入邮箱" maxlength="50" />
+              <el-input v-model="form.email" placeholder="请输入邮箱" maxlength="50" />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item v-if="editForm.userId == undefined" label="用户名称" prop="userName">
-              <el-input v-model="editForm.userName" placeholder="请输入用户名称" maxlength="30" />
+            <el-form-item v-if="form.userId == undefined" label="用户名称" prop="userName">
+              <el-input v-model="form.userName" placeholder="请输入用户名称" maxlength="30" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item v-if="editForm.userId == undefined" label="用户密码" prop="password">
-              <el-input v-model="editForm.password" placeholder="请输入用户密码" type="password" maxlength="20" show-password/>
+            <el-form-item v-if="form.userId == undefined" label="用户密码" prop="password">
+              <el-input v-model="form.password" placeholder="请输入用户密码" type="password" maxlength="20" show-password/>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
             <el-form-item label="用户性别">
-              <el-select v-model="editForm.sex" placeholder="请选择">
+              <el-select v-model="form.sex" placeholder="请选择">
 <!--                <el-option-->
 <!--                    v-for="dict in sexOptions"-->
 <!--                    :key="dict.dictValue"-->
@@ -136,7 +136,7 @@
           <el-col :span="12">
             <el-form-item label="状态">
               <el-switch
-                  v-model="editForm.status">
+                  v-model="form.status">
               </el-switch>
             </el-form-item>
           </el-col>
@@ -144,7 +144,7 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="岗位">
-              <el-select v-model="editForm.postIds" multiple placeholder="请选择">
+              <el-select v-model="form.postIds" multiple placeholder="请选择">
 <!--                <el-option-->
 <!--                    v-for="item in postOptions"-->
 <!--                    :key="item.postId"-->
@@ -157,14 +157,14 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="角色" >
-              <el-tag v-show="editForm.userId === 1"> 超级管理员 </el-tag>
-              <el-select v-show="editForm.userId !== 1" v-model="editForm.roleIds" multiple placeholder="请选择" >
+              <el-tag v-show="form.userId === 1"> 超级管理员 </el-tag>
+              <el-select v-show="form.userId !== 1" v-model="form.roleIds" multiple placeholder="请选择" >
                 <el-option
                     v-for="item in roleOptions"
                     :key="item.roleId"
                     :label="item.roleName"
                     :value="item.roleId"
-                    v-show="item.roleId === 1 ?  editForm.roleId === 1: true"
+                    v-show="item.roleId === 1 ?  form.roleId === 1: true"
                 ></el-option>
               </el-select>
             </el-form-item>
@@ -173,13 +173,13 @@
         <el-row>
           <el-col :span="24">
             <el-form-item label="备注">
-              <el-input v-model="editForm.remark" type="textarea" placeholder="请输入内容"></el-input>
+              <el-input v-model="form.remark" type="textarea" placeholder="请输入内容"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm('editForm')">确 定</el-button>
+        <el-button type="primary" @click="submitForm('form')">确 定</el-button>
         <el-button @click="handleClose">取 消</el-button>
       </div>
     </el-dialog>
@@ -209,7 +209,7 @@
 </template>
 
 <script>
-import {deleteUserById, getUserById, getUserList, saveUser, updateUserRole} from "@/api/user";
+import {deleteUserById, getUserById, getUserList, saveUser, updateUserRole, updateUserStatus} from "@/api/user";
 import {getRoleList, roleSelectOptions} from "@/api/role";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
@@ -221,16 +221,18 @@ export default {
   },
   data() {
     return {
-      searchForm: {},
-      delBtlStatu: true,
+      searchForm: {
+        pageNum: 1,
+        pageSize: 10,
+        keyword:undefined
+      },
+      delBtlStatus: true,
 
       total: 0,
-      size: 10,
-      current: 1,
 
       dialogVisible: false,
       dialogTitle:'新增',
-      editForm: {
+      form: {
         status: true
       },
       roleOptions:[],
@@ -287,7 +289,7 @@ export default {
       loading:false,
       tableData: [],
 
-      editFormRules: {
+      formRules: {
         userName: [
           { required: true, message: "用户名称不能为空", trigger: "blur" },
           { min: 2, max: 20, message: '用户名称长度必须介于 2 和 20 之间', trigger: 'blur' }
@@ -341,11 +343,7 @@ export default {
      */
     getUserList() {
       this.loading = true;
-      getUserList( {
-        keyword: this.searchForm.keyword,
-        page: this.current,
-        limit: this.size
-      }).then(res => {
+      getUserList( this.searchForm).then(res => {
         this.tableData = res.rows
         this.total = res.total
         this.loading = false;
@@ -377,7 +375,7 @@ export default {
       console.log(val)
       this.multipleSelection = val;
       console.log(this.multipleSelection)
-      this.delBtlStatu = val.length == 0
+      this.delBtlStatus = val.length == 0
     },
     //删除操作
     handleDelete(id) {
@@ -414,13 +412,13 @@ export default {
     resetForm(formName) {
       //this.$refs[formName].resetFields();
       this.dialogVisible = false
-      this.editForm = {
+      this.form = {
         status: true
       }
     },
     //关闭表单
     handleClose() {
-      this.resetForm('editForm')
+      this.resetForm('form')
     },
     getRoleSelectOptions(){
       roleSelectOptions().then(res=>{
@@ -442,8 +440,8 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          this.editForm.roles=undefined
-          saveUser(this.editForm.userId?'update' : 'save', this.editForm)
+          this.form.roles=undefined
+          saveUser(this.form.userId?'update' : 'save', this.form)
               .then(res => {
 
                 this.$message({
@@ -469,7 +467,7 @@ export default {
      */
     handleAdd(){
       console.log("add")
-      this.resetForm('editForm')
+      this.resetForm('form')
       this.dialogTitle = "新增";
       this.dialogVisible = true;
     },
@@ -479,65 +477,25 @@ export default {
     handleEdit(id) {
       console.log(id)
       getUserById(id).then(res => {
-        this.editForm = res
+        this.form = res
 
         this.dialogVisible = true
       })
     },
 
-
-    roleHandle (id) {
-      this.roleDialogFormVisible = true
-
-      getUserById(id).then(res => {
-        this.roleForm = res
-
-        let roleIds = []
-        res.sysRoles.forEach(row => {
-          roleIds.push(row.id)
-        })
-
-        this.$refs.roleTree.setCheckedKeys(roleIds)
-      })
-    },
-    submitRoleHandle(formName) {
-      var roleIds = this.$refs.roleTree.getCheckedKeys()
-
-      console.log(roleIds)
-
-      updateUserRole(this.roleForm.id, roleIds).then(res => {
-        this.$message({
-          showClose: true,
-          message: '恭喜你，操作成功',
-          type: 'success',
-          onClose:() => {
-            this.getUserList()
-          }
-        });
-
-        this.roleDialogFormVisible = false
-      })
-    },
-    repassHandle(id, username) {
-
-      this.$confirm('将重置用户【' + username + '】的密码, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        // this.$axios.post("/sys/user/repass", id).then(res => {
-        //
-        // })
-
+    handleStatusChange(row){
+      updateUserStatus(row.userId,row.status).then(res=>{
         this.$message({
           showClose: true,
           message: '恭喜你，操作成功',
           type: 'success',
           onClose: () => {
+            this.getUserList()
           }
         });
       })
-    }
+    },
+
   }
 }
 </script>

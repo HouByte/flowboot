@@ -6,6 +6,9 @@ import {ajax} from "../ajax";
 export function updatePass(data){
     return ajax.postJson('/sys/user/updatePass',data);
 }
+export function updateUserStatus(id,data){
+    return ajax.postForm('/sys/user/update/status/'+id, {status:data});
+}
 
 
 export function getUserById(id) {

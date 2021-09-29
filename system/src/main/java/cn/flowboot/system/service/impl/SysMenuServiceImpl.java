@@ -16,6 +16,7 @@ import cn.flowboot.system.domain.entity.SysMenu;
 import cn.flowboot.system.service.SysMenuService;
 import cn.flowboot.system.mapper.SysMenuMapper;
 import org.apache.commons.lang3.ArrayUtils;
+import org.assertj.core.util.Maps;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -91,6 +92,31 @@ implements SysMenuService{
 
         AssertUtil.isTrue(!saveOrUpdate(sysMenu),"保存失败");
 
+    }
+
+    @Override
+    public void deleteMenu(Long id) {
+        AssertUtil.isTrue(hasChlid(id),"存在子节点不能删除");
+        AssertUtil.isTrue(!removeById(id),"删除失败");
+    }
+
+    @Override
+    public void updateStatus(Long id, Boolean status) {
+        SysMenu sysMenu = getById(id);
+        System.out.println(id+","+sysMenu);
+        AssertUtil.isTrue(sysMenu == null,"更新菜单不存在");
+        sysMenu.setStatus(status);
+        updateById(sysMenu);
+    }
+
+    /**
+     * 判断是否有子节点
+     * @param pid
+     * @return
+     */
+    private Boolean hasChlid(Long pid){
+        List<SysMenu> sysMenus = listByMap(Maps.newHashMap("parent_id", pid));
+        return sysMenus != null && sysMenus.size() > 0;
     }
 
     private void verification(MenuDto menuDto) {

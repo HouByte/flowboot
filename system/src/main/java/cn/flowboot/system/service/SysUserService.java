@@ -27,4 +27,6 @@ public interface SysUserService extends IService<SysUser> {
     void saveOrUpdate(boolean update, UserDto userDto);
 
     UserDto queryOneById(Long id);
+
+    void updateStatus(Long id, Boolean status);
 }

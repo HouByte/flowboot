@@ -27,4 +27,8 @@ public interface SysMenuService extends IService<SysMenu> {
     List<SysMenu> queryMenuTrees();
 
     void saveOrUpdate(boolean update, MenuDto menuDto);
+
+    void deleteMenu(Long id);
+
+    void updateStatus(Long id, Boolean status);
 }

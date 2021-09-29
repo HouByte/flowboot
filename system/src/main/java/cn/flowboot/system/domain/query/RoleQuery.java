@@ -1,4 +1,4 @@
-package cn.flowboot.system.domain.dto;
+package cn.flowboot.system.domain.query;
 
 import cn.flowboot.common.croe.domain.BaseQuery;
 import lombok.AllArgsConstructor;

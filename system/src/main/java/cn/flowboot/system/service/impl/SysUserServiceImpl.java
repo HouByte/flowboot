@@ -132,6 +132,14 @@ implements SysUserService{
         return userDto;
     }
 
+    @Override
+    public void updateStatus(Long id, Boolean status) {
+        SysUser sysUser = getById(id);
+        AssertUtil.isTrue(sysUser == null,"更新用户不存在");
+        sysUser.setStatus(status);
+        updateById(sysUser);
+    }
+
     /**
      * 创建用户拷贝数据
      * @param userDto
