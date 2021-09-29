@@ -232,6 +232,7 @@ export default {
 
       dialogVisible: false,
       dialogTitle:'新增',
+      initPassword: undefined,
       form: {
         status: true
       },
@@ -335,7 +336,9 @@ export default {
     this.getUserList()
 
     this.getRoleSelectOptions();
-
+    this.getConfigValue("sys.user.initPassword").then(response => {
+      this.initPassword = response;
+    });
   },
   methods: {
     /**
@@ -413,7 +416,8 @@ export default {
       //this.$refs[formName].resetFields();
       this.dialogVisible = false
       this.form = {
-        status: true
+        status: true,
+        password: this.initPassword
       }
     },
     //关闭表单

@@ -8,7 +8,7 @@ import Ajax from "./ajax"
 import Pagination from "@/components/Pagination";
 import iconPicker from 'vue-fontawesome-elementui-icon-picker';
 import directive from './directive' //directive
-
+import {getConfigValue} from "@/api/config";
 import {
   addDateRange,
   download,
@@ -30,6 +30,7 @@ Vue.use(directive)
 Vue.component('Pagination', Pagination)
 
 // 全局方法挂载
+Vue.prototype.getConfigValue = getConfigValue
 Vue.prototype.parseTime = parseTime
 Vue.prototype.resetForm = resetForm
 Vue.prototype.addDateRange = addDateRange

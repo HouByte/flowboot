@@ -64,7 +64,7 @@ implements SysConfigService{
     public Object getValue(String key) {
         QueryWrapper<SysConfig> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("config_key",key);
-        return getOne(queryWrapper);
+        return getOne(queryWrapper).getConfigValue();
     }
 
 

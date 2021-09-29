@@ -6,7 +6,11 @@ export function getConfigById(id) {
     return ajax.get("/sys/config/info/"+id);
 }
 
+export function getConfigValue(key) {
 
+
+    return ajax.get("/sys/config/get/"+key)
+}
 
 
 export function deleteConfigById(ids) {
