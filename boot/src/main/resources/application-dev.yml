@@ -45,15 +45,11 @@ flowboot:
       - /captcha
       - /login
       - /logout
-      - /CAI/school/admin/select/list
       - /resources/**
       - /sys/user/register/
   captchaType: math
   file:
     path: /home/data/
-    project: 'project'
-    dataset: 'dataset'
-    url: 'http://localhost:'
 
 logging:
   level:
