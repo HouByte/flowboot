@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="app-container">
 
     <el-form :inline="true">
       <el-form-item>
@@ -119,7 +119,7 @@
             <el-form-item v-if="form.menuType != 'F'">
               <span slot="label">
                 <el-tooltip content="选择是外链则路由地址需要以`http(s)://`开头" placement="top">
-                <i class="el-icon-question"></i>
+                <i class="el-icon-forum"></i>
                 </el-tooltip>
                 是否外链
               </span>
@@ -130,7 +130,7 @@
             <el-form-item v-if="form.menuType != 'F'" prop="path">
               <span slot="label">
                 <el-tooltip content="访问的路由地址，如：`user`，如外网地址需内链访问则以`http(s)://`开头" placement="top">
-                <i class="el-icon-question"></i>
+                <i class="el-icon-forum"></i>
                 </el-tooltip>
                 路由地址
               </span>
@@ -141,7 +141,7 @@
             <el-form-item prop="component">
               <span slot="label">
                 <el-tooltip content="访问的组件路径，如：`system/user/index`，默认在`views`目录下" placement="top">
-                <i class="el-icon-question"></i>
+                <i class="el-icon-forum"></i>
                 </el-tooltip>
                 组件路径
               </span>
@@ -152,8 +152,8 @@
             <el-form-item v-if="form.menuType != 'M'">
               <el-input v-model="form.perms" placeholder="请输入权限标识" maxlength="100" />
               <span slot="label">
-                <el-tooltip content="控制器中定义的权限字符，如：@PreAuthorize(`@ss.hasPermi('system:user:list')`)" placement="top">
-                <i class="el-icon-question"></i>
+                <el-tooltip content="控制器中定义的权限字符，如：@PreAuthorize(`@auth.hasPermi('system:user:list')`)" placement="top">
+                <i class="el-icon-forum"></i>
                 </el-tooltip>
                 权限字符
               </span>
@@ -163,7 +163,7 @@
             <el-form-item v-if="form.menuType != 'F'">
               <span slot="label">
                 <el-tooltip content="选择隐藏则路由将不会出现在侧边栏，但仍然可以访问" placement="top">
-                <i class="el-icon-question"></i>
+                <i class="el-icon-forum"></i>
                 </el-tooltip>
                 显示状态
               </span>
@@ -175,7 +175,7 @@
             <el-form-item v-if="form.menuType != 'F'">
               <span slot="label">
                 <el-tooltip content="选择停用则路由将不会出现在侧边栏，也不能被访问" placement="top">
-                <i class="el-icon-question"></i>
+                <i class="el-icon-forum"></i>
                 </el-tooltip>
                 菜单状态
               </span>
@@ -186,7 +186,7 @@
             <el-form-item v-if="form.menuType == 'C'">
               <span slot="label">
                 <el-tooltip content="选择是则会被`keep-alive`缓存，需要匹配组件的`name`和地址保持一致" placement="top">
-                <i class="el-icon-question"></i>
+                <i class="el-icon-forum"></i>
                 </el-tooltip>
                 是否缓存
               </span>
@@ -206,10 +206,9 @@
 </template>
 
 <script>
-import {deleteById, getMenuById, getMenuTreeOptions, getMenuTrees, saveMenu, updateMenuStatus} from "@/api/menu";
+import {deleteById, getMenuTreeOptions, getMenuTrees, saveMenu, updateMenuStatus} from "@/api/menu";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
-import {updateRoleStatus} from "@/api/role";
 
 export default {
   name: "Menu",

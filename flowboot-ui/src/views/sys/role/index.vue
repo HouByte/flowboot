@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="app-container">
     <el-form :inline="true">
       <el-form-item>
         <el-input
@@ -95,7 +95,7 @@
         <el-form-item prop="roleKey">
           <span slot="label">
             <el-tooltip content="控制器中定义的权限字符，如：@PreAuthorize(`@ss.hasRole('admin')`)" placement="top">
-              <i class="el-icon-question"></i>
+              <i class="el-icon-forum"></i>
             </el-tooltip>
             权限字符
           </span>
@@ -137,9 +137,8 @@
 </template>
 
 <script>
-import {getRoleById, getRoleList, saveRole, updatePerm, deleteRoleById, updateRoleStatus} from "@/api/role";
-import {getMenuTreeOptions,getMenuTreeselect} from "@/api/menu";
-import {updateUserStatus} from "@/api/user";
+import {deleteRoleById, getRoleList, saveRole, updateRoleStatus} from "@/api/role";
+import {getMenuTreeOptions, getMenuTreeselect} from "@/api/menu";
 
 export default {
   name: "Role",

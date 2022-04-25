@@ -1,6 +1,7 @@
 package cn.flowboot.system.service.impl;
 
 import cn.flowboot.common.croe.domain.user.LoginUser;
+
 import cn.flowboot.system.service.SysUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +33,12 @@ public class ConsumerUserDetailsService implements UserDetailsService {
 
     private final SysUserService sysUserService;
 
+    /**
+     * security 加载用户信息
+     * @param username
+     * @return
+     * @throws UsernameNotFoundException
+     */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         log.info("loadUserByUsername {}",username);

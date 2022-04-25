@@ -1,5 +1,5 @@
-import { login, logout, getInfo } from '@/api/login'
-import {getToken, setToken, removeToken, getPermissions, setPermissions, removePermissions} from '@/utils/auth'
+import {getInfo, login, logout} from '@/api/login'
+import {getToken, removePermissions, removeToken, setPermissions, setToken} from '@/utils/auth'
 
 
 const user = {
@@ -8,7 +8,8 @@ const user = {
     name: '',
     avatar: '',
     roles: [],
-    permissions: []
+    permissions: [],
+    identity:{}
   },
 
   mutations: {
@@ -29,7 +30,9 @@ const user = {
       state.permissions = permissions
 
       setPermissions(permissions);
-
+    },
+    SET_IDENTITY: (state, identity) => {
+      state.identity = identity
     }
   },
 
@@ -59,6 +62,7 @@ const user = {
       return new Promise((resolve, reject) => {
         getInfo().then(res => {
           const user = res.user
+
           //process.env.VUE_APP_BASE_API
           const avatar = user.avatar == "" ? require("@/assets/images/profile.jpg") :  user.avatar;
           if (res.roles && res.roles.length > 0) { // 验证返回的roles是否是一个非空数组
@@ -76,6 +80,7 @@ const user = {
           }
           commit('SET_NAME', user.username)
           commit('SET_AVATAR', avatar)
+          commit('SET_IDENTITY',res.auth)
           resolve(res)
         }).catch(error => {
           console.log("请求用户信息错误",error)

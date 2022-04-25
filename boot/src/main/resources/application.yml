@@ -1,54 +1,31 @@
-server:
-  port: 8081
 spring:
   application:
-    name: flowboot
-  datasource:
-    type: com.alibaba.druid.pool.DruidDataSource
-    druid:
-      driver-class-name: com.mysql.cj.jdbc.Driver
-      url: jdbc:mysql://localhost:3306/flowboot?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
-      username: root
-      password: root
-      initial-size: 8
-      max-active: 16
-      min-idle: 8
-      max-wait: 60000
-      test-while-idle: true
-      test-on-borrow: false
-      test-on-return: false
+    name: flowboot-rbac
+  profiles:
+    #  配置的环境
+    #    active: #spring.profiles.active#
+    active: local
 
-    redis:
-      database: 0
-      host: localhost
-      port: 6379
-      #    password: abc123456
-      jedis:
-        pool:
-          max-active: 1000
-          max-wait: -1ms
-          max-idle: 16
-          min-idle: 8
+# mybatis-plus配置
+mybatis-plus:
+  # mapper.xml路径
+  mapper-locations: classpath*:mapper/**/*.xml
+  # 实体扫描，多个package用逗号或者分号分隔
+  type-aliases-package: com.hzw.code.fast.entity
+  global-config:
+    db-config:
+      # 驼峰下划线转换
+      table-underline: true
+  configuration:
+    # 配置返回数据库(column下划线命名&&返回java实体是驼峰命名)，自动匹配无需as（如不开启，SQL需要写as： select user_id as userId）
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+    # 打印sql配置
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
-flowboot:
-  jwt:
-    #密钥
-    access-secret: 3BCu6M0P7KDShVvj45wZ9Nbek1dyJs2U8OrIEzgLAiqGcXpYtHGa1CnSHYEouN5sXd9mljB7wM0feIJ3PZAK6bhDt2VzUrFkp8OTSILZPxJVcemdhuoq1kKpaQUTMyrDbHX4s6zi93CBGO7jFRgAwW1Q2ijGovu4M5OpSeRdKFBfIr9VmYakwLUTXtqx7HAPcW0zDEbNU5Vnfb0rtsxMIzKcyB9N4gSYoZvJ6EAHGC8iTQLa3mR1pXu7Fh
-    refresh-secret: 3BCu6M0P7KDShVvj45wZ9Nbek1dyJs2U8OrIEzgLAiqGcXpYtHGa1CnSHYEouN5sXd9mljB7wM0feIJ3PZAK6bhDt2VzUrFkp8OTSILZPxJVcemdhuoq1kKpaQUTMyrDbHX4s6zi93CBGO7jFRgAwW1Q2ijGovu4M5OpSeRdKFBfIr9VmYakwLUTX12x7HAPcW0zDEbNU5Vnfb0rtsxMIzKcyB9N4gSY1ZvJ]2EAHGC8iTQLa3mR1pXu7Fh
-    #令牌过期时间(天） 1天
-    expire: 86400000
-    #令牌缓存时间(天)
-    cache-expire: 10
-    ignore-filter:
-      - /webjars/**
-      - /favicon.ico
-      - /captcha
-    ignore-auth:
-      - /login
-      - /logout
-  captchaType: math
-
-logging:
-  level:
-    root: info
-
+# 分页配置
+pagehelper:
+  supportMethodsArguments: true
+  reasonable: false
+  helperDialect: mysql
+  params: count=countSql

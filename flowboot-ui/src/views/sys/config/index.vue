@@ -122,7 +122,7 @@
           <el-input v-model="form.configValue" placeholder="请输入参数键值" />
         </el-form-item>
         <el-form-item label="系统内置" prop="configType">
-          <el-switch v-model="form.builtIn"/>
+          <el-switch v-model="form.configType"/>
         </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" type="textarea" placeholder="请输入内容" />
@@ -215,7 +215,7 @@ export default {
         configName: undefined,
         configKey: undefined,
         configValue: undefined,
-        builtIn: false,
+        configType: true,
         remark: undefined
       };
       this.resetForm("form");

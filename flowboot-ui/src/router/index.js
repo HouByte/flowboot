@@ -3,24 +3,11 @@ import VueRouter from 'vue-router'
 import Index from '../views/index/Index'
 import Home from '../views/home/Home'
 import Login from '../views/login/Login.vue'
-import {
-  err403,
-  err404,
-  err500
-} from "./modules/statusCode";
-import {
-  UserRePassword
-} from "./modules/user"
-import {
-  getMenuNav
-} from "@/api/menu";
+import {err403, err404, err500} from "./modules/statusCode";
+import {UserRePassword} from "./modules/user"
+import {getMenuNav} from "@/api/menu";
 import store from '@/store'
-import {
-  getToken
-} from "@/utils/auth";
-import {
-  Message
-} from "element-ui";
+import {getToken} from "@/utils/auth";
 
 
 Vue.use(VueRouter)
@@ -47,9 +34,15 @@ const routes = [{
       title: '首页'
     },
   },
+
     UserRePassword,err403, err404, err500
   ]
 },
+  // {
+  //   path: '/sys/menu',
+  //   name: 'menu',
+  //   component: ()=>import('@/views/sys/menu/index')
+  // },
   {
     path: '/login',
     name: 'Login',
@@ -71,17 +64,28 @@ function generateRoutes() {
     store.commit('SET_MENU_LIST',res);
     //动态绑定路由
     let newRoutes = router.options.routes;
-
     res.forEach(menu => {
-      if (menu.children){
+      if (menu.menuType === 'M' && menu.children){
         menu.children.forEach(e => {
           let router = menuToRoute(e);
           if (router){
             newRoutes[0].children.push(router);
           }
         })
+      } else if (menu.menuType === 'C' && menu.children){ //菜单但是有子项
+        let router = menuToRoute(menu);
+        if (router){
+          router.children = []
+          menu.children.forEach(e => {
+            let routerItem = menuToRoute(e);
+            if (routerItem){
+              router.children.push(routerItem);
+            }
+          })
+          newRoutes[0].children.push(router);
+        }
       } else if (menu.children <= 0) {
-        let router = menuToRoute(e);
+        let router = menuToRoute(menu);
         if (router){
           newRoutes[0].children.push(router);
         }
@@ -96,6 +100,15 @@ const whiteList = ['/login', '/auth-redirect', '/bind', '/register']
 
 router.beforeEach((to, from, next) => {
   let hasRoute = store.state.menus.hasRoutes
+  if (to.meta.title) {
+    document.title = to.meta.title + ' | '+Vue.prototype.title
+  }
+
+  // if (to.name === null){
+  //   next({
+  //     path: '/404'
+  //   })
+  // }
 
   if (getToken()) {
     if (to.path == '/login') {
@@ -147,8 +160,7 @@ const menuToRoute = (menu) => {
       title: menu.title
     }
   }
-
-  route.component = () => import('@/views/' + menu.component + '.vue')
+  route.component = () => import('@/views' + menu.component + '.vue')
   return route;
 }
 export default router

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="app-container">
     <el-form :inline="true">
       <el-form-item>
         <el-input
@@ -91,8 +91,17 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="归属部门" prop="deptId">
-              <treeselect v-model="form.deptId" :options="deptOptions" :show-count="true" placeholder="请选择归属部门" />
+            <el-form-item label="角色" >
+              <el-tag v-show="form.userId === 1"> 超级管理员 </el-tag>
+              <el-select v-show="form.userId !== 1" v-model="form.roleIds" multiple placeholder="请选择" >
+                <el-option
+                    v-for="item in roleOptions"
+                    :key="item.roleId"
+                    :label="item.roleName"
+                    :value="item.roleId"
+                    v-show="item.roleId === 1 ?  form.roleId === 1: true"
+                ></el-option>
+              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
@@ -124,12 +133,12 @@
           <el-col :span="12">
             <el-form-item label="用户性别">
               <el-select v-model="form.sex" placeholder="请选择">
-<!--                <el-option-->
-<!--                    v-for="dict in sexOptions"-->
-<!--                    :key="dict.dictValue"-->
-<!--                    :label="dict.dictLabel"-->
-<!--                    :value="dict.dictValue"-->
-<!--                ></el-option>-->
+                <el-option
+                    v-for="sex in sexOptions"
+                    :key="sex.value"
+                    :label="sex.label"
+                    :value="sex.value"
+                ></el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -141,35 +150,27 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="岗位">
-              <el-select v-model="form.postIds" multiple placeholder="请选择">
-<!--                <el-option-->
-<!--                    v-for="item in postOptions"-->
-<!--                    :key="item.postId"-->
-<!--                    :label="item.postName"-->
-<!--                    :value="item.postId"-->
-<!--                    :disabled="item.status == 1"-->
-<!--                ></el-option>-->
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="角色" >
-              <el-tag v-show="form.userId === 1"> 超级管理员 </el-tag>
-              <el-select v-show="form.userId !== 1" v-model="form.roleIds" multiple placeholder="请选择" >
-                <el-option
-                    v-for="item in roleOptions"
-                    :key="item.roleId"
-                    :label="item.roleName"
-                    :value="item.roleId"
-                    v-show="item.roleId === 1 ?  form.roleId === 1: true"
-                ></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
+<!--        <el-row>-->
+<!--          <el-col :span="12">-->
+<!--            <el-form-item label="岗位">-->
+<!--              <el-select v-model="form.postIds" multiple placeholder="请选择">-->
+<!--&lt;!&ndash;                <el-option&ndash;&gt;-->
+<!--&lt;!&ndash;                    v-for="item in postOptions"&ndash;&gt;-->
+<!--&lt;!&ndash;                    :key="item.postId"&ndash;&gt;-->
+<!--&lt;!&ndash;                    :label="item.postName"&ndash;&gt;-->
+<!--&lt;!&ndash;                    :value="item.postId"&ndash;&gt;-->
+<!--&lt;!&ndash;                    :disabled="item.status == 1"&ndash;&gt;-->
+<!--&lt;!&ndash;                ></el-option>&ndash;&gt;-->
+<!--              </el-select>-->
+<!--            </el-form-item>-->
+<!--          </el-col>-->
+<!--          <el-col :span="12">-->
+<!--            <el-form-item label="归属部门" prop="deptId">-->
+<!--              <treeselect v-model="form.deptId" :options="deptOptions" :show-count="true" placeholder="请选择归属部门" />-->
+<!--            </el-form-item>-->
+<!--          </el-col>-->
+
+<!--        </el-row>-->
         <el-row>
           <el-col :span="24">
             <el-form-item label="备注">
@@ -209,8 +210,8 @@
 </template>
 
 <script>
-import {deleteUserById, getUserById, getUserList, saveUser, updateUserRole, updateUserStatus} from "@/api/user";
-import {getRoleList, roleSelectOptions} from "@/api/role";
+import {deleteUserById, getUserById, getUserList, saveUser, updateUserStatus} from "@/api/user";
+import {roleSelectOptions} from "@/api/role";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 
@@ -267,20 +268,6 @@ export default {
                   "label":"运维部门"
                 }
               ]
-            },
-            {
-              "id":102,
-              "label":"长沙分公司",
-              "children":[
-                {
-                  "id":108,
-                  "label":"市场部门"
-                },
-                {
-                  "id":109,
-                  "label":"财务部门"
-                }
-              ]
             }
           ]
         }
@@ -319,7 +306,20 @@ export default {
       },
 
       multipleSelection: [],
-
+      sexOptions:[
+          {
+            value:"0",
+            label:"男"
+          },
+          {
+            value:"1",
+            label:"女"
+          },
+          {
+            value:"2",
+            label:"未知"
+          }
+      ],
       roleDialogFormVisible: false,
       defaultProps: {
         children: 'children',

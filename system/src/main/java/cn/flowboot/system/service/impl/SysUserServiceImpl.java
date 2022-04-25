@@ -1,10 +1,14 @@
 package cn.flowboot.system.service.impl;
 
+import cn.flowboot.common.constant.Constants;
 import cn.flowboot.common.croe.domain.SelectOption;
 import cn.flowboot.common.croe.domain.user.LoginUser;
+import cn.flowboot.common.exception.ServiceException;
 import cn.flowboot.common.utils.AssertUtil;
 import cn.flowboot.common.utils.CopyUtil;
+import cn.flowboot.common.utils.RedisCache;
 import cn.flowboot.common.utils.SecurityUtils;
+import cn.flowboot.system.domain.dto.RegisterDto;
 import cn.flowboot.system.domain.dto.UserDto;
 import cn.flowboot.system.domain.entity.SysRole;
 import cn.flowboot.system.domain.entity.SysRoleMenu;
@@ -22,11 +26,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.cglib.beans.BeanCopier;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -35,18 +41,27 @@ import java.util.stream.Collectors;
 
 /**
  *
+ *
+ * @version 1.0
+ * @author: Vincent Vic
+ * @since: 2021/09/27
  */
 @RequiredArgsConstructor
 @Slf4j
 @Service
-public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser>
-implements SysUserService{
+public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> implements SysUserService{
 
     private final SysMenuService sysMenuService;
     private final SysRoleService sysRoleService;
     private final SysUserRoleService sysUserRoleService;
     private final PasswordEncoder passwordEncoder;
+    private final RedisCache redisCache;
 
+    /**
+     * 根据用户名查询用户
+     * @param username
+     * @return
+     */
     @Override
     public SysUser getOneByUsername(String username) {
         AssertUtil.isTrue(username == null,"用户名不能为空");
@@ -55,10 +70,14 @@ implements SysUserService{
         return getOne(queryWrapper);
     }
 
+    /**
+     * 根据用户名查询登入信息
+     * @param username
+     * @return
+     */
     @Override
     public LoginUser getLoginUserByUsername(String username) {
         SysUser sysUser = getOneByUsername(username);
-        log.info("用户查询结果 {}",sysUser);
         LoginUser loginUser = CopyUtil.copy(sysUser, LoginUser.class);
         //获取角色和权限
         if (loginUser== null){
@@ -73,6 +92,11 @@ implements SysUserService{
         return loginUser;
     }
 
+    /**
+     * 管理列表
+     * @param keyword
+     * @return
+     */
     @Override
     public List<UserVo> queryList(String keyword) {
         QueryWrapper<SysUser> queryWrapper = new QueryWrapper<>();
@@ -85,8 +109,8 @@ implements SysUserService{
     }
 
     /**
-     * @param update  true 为更新
-     * @param userDto
+     * 更新或新增
+     * @param update true 为更新
      */
     @Override
     public void saveOrUpdate(boolean update, UserDto userDto) {
@@ -103,6 +127,7 @@ implements SysUserService{
         }
 
         AssertUtil.isTrue(!saveOrUpdate(sysUser),"保存失败");
+        //更新关系
         relationRole(update,sysUser.getUserId(),userDto.getRoleIds());
     }
 
@@ -118,6 +143,11 @@ implements SysUserService{
         AssertUtil.isTrue(!sysUserRoleService.saveBatch(sysUserRoles),"授权失败");
     }
 
+    /**
+     * 查询单个信息
+     * @param id
+     * @return
+     */
     @Override
     public UserDto queryOneById(Long id) {
         SysUser sysUser = getById(id);
@@ -132,6 +162,11 @@ implements SysUserService{
         return userDto;
     }
 
+    /**
+     * 更新状态
+     * @param id
+     * @param status
+     */
     @Override
     public void updateStatus(Long id, Boolean status) {
         SysUser sysUser = getById(id);
@@ -140,6 +175,39 @@ implements SysUserService{
         updateById(sysUser);
     }
 
+    /**
+     * 注册
+     *
+     * @param registerDto
+     */
+    @Override
+    public void register(RegisterDto registerDto) {
+        validate(registerDto.getCode(),registerDto.getUuid());
+        SysUser sysUser = new SysUser();
+        AssertUtil.isTrue(getOneByUsername(registerDto.getUsername()) != null,"用户名存在");
+        sysUser.setUserName(registerDto.getUsername());
+        sysUser.setNickName(registerDto.getUsername());
+        sysUser.setPassword(passwordEncoder.encode(registerDto.getPassword()));
+        sysUser.setStatus(true);
+        AssertUtil.isTrue(!save(sysUser),"注册失败");
+        sysUserRoleService.addUserRole(sysUser.getUserId(),0L);
+    }
+
+    // 校验验证码逻辑
+    private void validate(String code,String uuid) throws ServiceException {
+
+
+        if (com.baomidou.mybatisplus.core.toolkit.StringUtils.isBlank(code) || com.baomidou.mybatisplus.core.toolkit.StringUtils.isBlank(uuid)) {
+            throw new ServiceException("验证码错误");
+        }
+        String verifyKey = Constants.CAPTCHA_CODE_KEY + uuid;
+        if (!code.equals(redisCache.getCacheObject(verifyKey))) {
+            throw new ServiceException("验证码错误");
+        }
+
+        // 一次性使用
+        redisCache.deleteObject(verifyKey);
+    }
     /**
      * 创建用户拷贝数据
      * @param userDto
@@ -171,6 +239,11 @@ implements SysUserService{
         sysUser.setUpdateTime(new Date());
     }
 
+    /**
+     * vo 转换
+     * @param list
+     * @return
+     */
     private List<UserVo> userToVo(List<SysUser> list) {
         return CopyUtil.copyList(list,UserVo.class);
     }

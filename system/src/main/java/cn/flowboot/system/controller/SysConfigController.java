@@ -15,6 +15,7 @@ import cn.flowboot.system.service.SysConfigService;
 import com.github.pagehelper.PageHelper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -35,6 +36,10 @@ public class SysConfigController extends BaseController {
 
     private final SysConfigService sysConfigService;
 
+    /**
+     * 配置列表
+     */
+    @PreAuthorize("@auth.hasPermi('sys:config:save')")
     @GetMapping("list")
     public AjaxResult list(ConfigQuery configQuery){
         PageHelper.startPage(configQuery.getPage(),configQuery.getLimit());
@@ -49,6 +54,7 @@ public class SysConfigController extends BaseController {
      * @param configDto
      * @return
      */
+    @PreAuthorize("@auth.hasPermi('sys:config:save')")
     @PostMapping("save")
     public AjaxResult save(@Valid @RequestBody ConfigDto configDto){
         AssertUtil.isTrue(configDto.getConfigId() != null,"系统错误");
@@ -56,6 +62,12 @@ public class SysConfigController extends BaseController {
         return success();
     }
 
+    /**
+     * 更新配置
+     * @param configDto
+     * @return
+     */
+    @PreAuthorize("@auth.hasPermi('sys:config:update')")
     @PostMapping("update")
     public AjaxResult update(@Valid @RequestBody ConfigDto configDto){
         AssertUtil.isTrue(configDto.getConfigId() == null,"更新数据不存在");
@@ -63,6 +75,12 @@ public class SysConfigController extends BaseController {
         return success();
     }
 
+    /**
+     * 删除配置
+     * @param baseDelete
+     * @return
+     */
+    @PreAuthorize("@auth.hasPermi('sys:config:delete')")
     @PostMapping("delete")
     public AjaxResult delete(@Valid @RequestBody BaseDelete baseDelete){
         AssertUtil.isTrue(baseDelete == null || baseDelete.getIds() == null || baseDelete.getIds().size() == 0,"请选择删除数据");
@@ -70,6 +88,12 @@ public class SysConfigController extends BaseController {
         return success();
     }
 
+    /**
+     * 查询配置
+     * @param key
+     * @return
+     */
+    @PreAuthorize("@auth.hasPermi('sys:config:query')")
     @GetMapping("get/{key}")
     public AjaxResult getValue(@PathVariable("key")String key){
         Object value = sysConfigService.getValue(key);

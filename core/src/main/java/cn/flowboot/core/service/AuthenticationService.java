@@ -12,5 +12,10 @@ import org.springframework.security.authentication.AbstractAuthenticationToken;
  */
 public interface AuthenticationService {
 
+    /**
+     * 封装认证发货数据
+     * @param authenticationToken
+     * @return
+     */
     AjaxResult getResult(AbstractAuthenticationToken authenticationToken);
 }

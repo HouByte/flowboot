@@ -27,12 +27,21 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
+ * 菜单实现类
  *
+ * @version 1.0
+ * @author: Vincent Vic
+ * @since: 2021/09/27
  */
 @Service
 public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu>
 implements SysMenuService{
 
+    /**
+     * 查询权限
+     * @param userId
+     * @return
+     */
     @Override
     public List<GrantedAuthority> queryPermissionsByUserId(Long userId) {
         AssertUtil.isTrue(userId == null,"权限查询异常错误码：QIDERR");
@@ -43,13 +52,24 @@ implements SysMenuService{
         return permissions.stream().map(permi -> new SimpleGrantedAuthority(permi)).collect(Collectors.toList());
     }
 
+    /**
+     * 查询当前用户导航栏数据
+     * @param loginUser
+     * @return
+     */
     @Override
     public List<MenuNavVo> queryCurrentUserNav(LoginUser loginUser) {
         List<SysMenu> sysMenus = queryCurrentUserMenu(loginUser);
         List<SysMenu> menuTree = buildMenuTree(sysMenus);
-        return toMenuNavList(menuTree);
+        List<MenuNavVo> menuNavVos = toMenuNavList(menuTree);
+        return menuNavVos.stream().sorted(Comparator.comparing(MenuNavVo::getOrderNum)).collect(Collectors.toList());
     }
 
+    /**
+     * 查询菜单id通过角色id
+     * @param roleId
+     * @return
+     */
     @Override
     public List<Long> queryMenuIdsByRoleId(Long roleId) {
         return getBaseMapper().queryMenuIdsByRoleId(roleId);
@@ -66,12 +86,21 @@ implements SysMenuService{
         return toTreeSelectList(menuTree);
     }
 
+    /**
+     * 查询树形列表
+     * @return
+     */
     @Override
     public List<SysMenu> queryMenuTrees() {
         List<SysMenu> list = list();
         return buildMenuTree(list);
     }
 
+    /**
+     * 更新或新增
+     * @param update 是否更新
+     * @param menuDto
+     */
     @Override
     public void saveOrUpdate(boolean update, MenuDto menuDto) {
         SysMenu sysMenu = null;
@@ -94,12 +123,21 @@ implements SysMenuService{
 
     }
 
+    /**
+     * 删除菜单
+     * @param id
+     */
     @Override
     public void deleteMenu(Long id) {
         AssertUtil.isTrue(hasChlid(id),"存在子节点不能删除");
         AssertUtil.isTrue(!removeById(id),"删除失败");
     }
 
+    /**
+     * 更新状态
+     * @param id
+     * @param status
+     */
     @Override
     public void updateStatus(Long id, Boolean status) {
         SysMenu sysMenu = getById(id);
@@ -119,6 +157,10 @@ implements SysMenuService{
         return sysMenus != null && sysMenus.size() > 0;
     }
 
+    /**
+     * 校验添加或更新数据
+     * @param menuDto
+     */
     private void verification(MenuDto menuDto) {
         Long parentId = menuDto.getParentId();
         if (parentId == null){
@@ -152,6 +194,11 @@ implements SysMenuService{
         }
     }
 
+    /**
+     * 创建转换数据
+     * @param menuDto
+     * @return
+     */
     private SysMenu createData(MenuDto menuDto) {
         SysMenu temp = CopyUtil.copy(menuDto, SysMenu.class);
         temp.setCreateTime(new Date());
@@ -159,6 +206,12 @@ implements SysMenuService{
         return temp;
     }
 
+    /**
+     * 更新转换数据
+     * @param sysMenu
+     * @param menuDto
+     * @return
+     */
     private SysMenu updateData(SysMenu sysMenu, MenuDto menuDto) {
         SysMenu temp = CopyUtil.copy(menuDto, SysMenu.class);
         temp.setMenuId(sysMenu.getMenuId());
@@ -168,6 +221,11 @@ implements SysMenuService{
         return temp;
     }
 
+    /**
+     * 转换类
+     * @param sysMenus
+     * @return
+     */
     private List<MenuNavVo> toMenuNavList(List<SysMenu> sysMenus) {
         if (sysMenus == null || sysMenus.size() == 0){
             return null;
@@ -175,6 +233,11 @@ implements SysMenuService{
         return sysMenus.stream().map(this::toMenuNavVo).collect(Collectors.toList());
     }
 
+    /**
+     * 转换类
+     * @param menuNavVos
+     * @return
+     */
     private List<TreeSelect> toTreeSelectList(List<SysMenu> menuNavVos) {
         if (menuNavVos == null || menuNavVos.size() == 0){
             return null;
@@ -182,6 +245,11 @@ implements SysMenuService{
         return menuNavVos.stream().map(this::toTreeSelect).collect(Collectors.toList());
     }
 
+    /**
+     * 转换树形结构
+     * @param sysMenu
+     * @return
+     */
     private TreeSelect toTreeSelect(SysMenu sysMenu){
         if (sysMenu == null){
             return null;
@@ -193,6 +261,11 @@ implements SysMenuService{
                 .build();
     }
 
+    /**
+     * 转换导航
+     * @param sysMenu
+     * @return
+     */
     private MenuNavVo toMenuNavVo(SysMenu sysMenu){
         if (sysMenu == null){
             return null;
@@ -201,11 +274,17 @@ implements SysMenuService{
         menuNavVo.setTitle(sysMenu.getMenuName());
         menuNavVo.setName(sysMenu.getPath());
         menuNavVo.setId(sysMenu.getMenuId());
+        menuNavVo.setOrderNum(sysMenu.getOrderNum());
         menuNavVo.setChildren(toMenuNavList(sysMenu.getChildren()));
         return menuNavVo;
     }
 
 
+    /**
+     * 构建树
+     * @param menus
+     * @return
+     */
     private List<SysMenu> buildMenuTree(List<SysMenu> menus) {
         //List<MenuNavVo> menus = sysMenus.stream().map(sysMenu -> menuToVo(sysMenu)).collect(Collectors.toList());
 
@@ -284,13 +363,19 @@ implements SysMenuService{
 
     public List<SysMenu> querySelectList() {
         QueryWrapper<SysMenu> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("status",1).eq("visible",1);
+        queryWrapper.eq("status",1);
         return list(queryWrapper);
     }
 
+    /**
+     * 查询登入用户菜单
+     * @param loginUser
+     * @return
+     */
     public List<SysMenu> queryCurrentUserMenu(LoginUser loginUser) {
         QueryWrapper<SysMenu> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("status",1).eq("visible",1);
+        queryWrapper.eq("status",1);
+        queryWrapper.orderByAsc("order_num");
         if (loginUser.isAdmin()){
             return list(queryWrapper);
         }

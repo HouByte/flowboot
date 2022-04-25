@@ -16,9 +16,25 @@ import javax.servlet.http.HttpServletRequest;
  */
 public interface TokenService {
 
+    /**
+     * 检查是否排除
+     * @param request
+     * @return
+     */
     boolean checkIgnore(HttpServletRequest request);
 
+    /**
+     * 得到登入用户信息
+     * @param request
+     * @return
+     */
     LoginUser getUser(HttpServletRequest request);
 
+    /**
+     * 创建令牌
+     *
+     * @param user 用户信息
+     * @return 令牌
+     */
     String createToken(UserDetails user);
 }

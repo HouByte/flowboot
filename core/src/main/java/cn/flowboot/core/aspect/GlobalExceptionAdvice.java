@@ -2,6 +2,7 @@ package cn.flowboot.core.aspect;
 
 
 import cn.flowboot.common.croe.domain.AjaxResult;
+import cn.flowboot.common.exception.ParamsException;
 import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -53,6 +54,16 @@ public class GlobalExceptionAdvice {
     public AjaxResult handlerJwtException(HttpServletRequest req,
                                           JwtException ex) {
         log.error("{}  jwt token 异常 ==> {}",req,ex);
+        AjaxResult response = AjaxResult.error(ex.getMessage());
+        return response;
+    }
+
+    @ResponseBody
+    @ResponseStatus(HttpStatus.PAYMENT_REQUIRED)
+    @ExceptionHandler(value = ParamsException.class)
+    public AjaxResult handlerJwtException(HttpServletRequest req,
+                                          ParamsException ex) {
+        log.error("{}  参数 异常 ==> {}",req,ex);
         AjaxResult response = AjaxResult.error(ex.getMessage());
         return response;
     }

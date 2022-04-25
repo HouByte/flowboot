@@ -19,12 +19,21 @@ import java.util.Date;
 import java.util.List;
 
 /**
+ * 配置服务
  *
+ * @version 1.0
+ * @author: Vincent Vic
+ * @since: 2021/09/27
  */
 @Service
 public class SysConfigServiceImpl extends ServiceImpl<SysConfigMapper, SysConfig>
 implements SysConfigService{
 
+    /**
+     * 查询列表
+     * @param configQuery
+     * @return
+     */
     @Override
     public List<SysConfig> queryList(ConfigQuery configQuery) {
         QueryWrapper<SysConfig> queryWrapper = new QueryWrapper<>();
@@ -40,6 +49,11 @@ implements SysConfigService{
         return list(queryWrapper);
     }
 
+    /**
+     * 更新或新增
+     * @param update 是否为更新
+     * @param configDto 配置dto
+     */
     @Override
     public void saveOrUpdate(boolean update, ConfigDto configDto) {
         SysConfig sysConfig = null;
@@ -60,6 +74,11 @@ implements SysConfigService{
         AssertUtil.isTrue(!saveOrUpdate(sysConfig),"保存失败");
     }
 
+    /**
+     * 得到值
+     * @param key
+     * @return
+     */
     @Override
     public Object getValue(String key) {
         QueryWrapper<SysConfig> queryWrapper = new QueryWrapper<>();

@@ -15,6 +15,13 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 public class ConsumerUserDetailsPasswordService implements UserDetailsPasswordService {
+
+    /**
+     * security 多密码模式下配置更新密码操作
+     * @param userDetails
+     * @param newPassword
+     * @return
+     */
     @Override
     public UserDetails updatePassword(UserDetails userDetails, String newPassword) {
         //TODO 多密码编码模式下，在用户登入时用户不是最新的密码方式将密码修改到最新操作

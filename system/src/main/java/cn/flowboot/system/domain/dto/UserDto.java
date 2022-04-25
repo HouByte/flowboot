@@ -50,8 +50,8 @@ public class UserDto implements Serializable {
     @NotBlank(message = "昵称不能为空")
     private String nickName;
 
-    @NotBlank(message = "密码不能为空")
-    @Length(min = 4,max = 16,message = "密码设置长度需要在4~16之间")
+//    @NotBlank(message = "密码不能为空")
+//    @Length(min = 4,max = 16,message = "密码设置长度需要在4~16之间")
     private String password;
 
     /**

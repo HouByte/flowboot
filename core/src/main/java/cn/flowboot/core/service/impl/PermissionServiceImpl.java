@@ -20,6 +20,8 @@ import java.util.Set;
  */
 @Service("auth")
 public class PermissionServiceImpl implements PermissionService {
+
+
     /**
      * 验证用户是否具备某权限
      *

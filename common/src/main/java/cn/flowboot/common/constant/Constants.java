@@ -65,6 +65,12 @@ public class Constants {
      */
     public static final String LOGIN_TOKEN_KEY = "login_tokens:";
 
+
+    /**
+     * 登录用户信息 通过id redis key
+     */
+    public static final String LOGIN_ID_KEY = "login_id:";
+
     /**
      * 防重提交 redis key
      */
@@ -127,6 +133,37 @@ public class Constants {
      */
     public static final String SYS_DICT_KEY = "sys_dict:";
 
+
+
+    /**
+     * 签到码 cache key
+     */
+    public static final Integer CAI_CHECK_END = Integer.MAX_VALUE;
+
+    /**
+     * 签到码 cache key
+     */
+    public static final String CAI_CHECK_KEY = "CAI_CHECK:";
+
+    /**
+     * 签到码 cache key
+     */
+    public static final String CAI_CURRENT_CHECK_KEY = "CAI_CURRENT_CHECK:";
+    /**
+     * 签到码 cache key
+     */
+    public static final String CAI_CHECK_TASK_KEY = "CAI_CHECK_TASK";
+
+    /**
+     * 签到数据 cache key
+     */
+    public static final String CAI_CHECK_LIST_KEY = "CAI_CHECK_LIST:";
+
+    /**
+     * 签到待签到名单 cache key
+     */
+    public static final String CAI_CHECK_WAITING_LIST_KEY = "CAI_CHECK_WAITING_LIST_KEY:";
+
     /**
      * 资源映射路径 前缀
      */
@@ -142,13 +179,17 @@ public class Constants {
      */
     public static final String LOOKUP_LDAP = "ldap://";
 
-    /** 所有权限标识 */
+    /**
+     * 所有权限标识
+     */
     public static final String ALL_PERMISSION = "*:*:*";
 
     /** 管理员角色权限标识 */
     public static final String SUPER_ADMIN = "admin";
     public static final String ROLE_DELIMETER = ",";
     public static final String PERMISSION_DELIMETER = ",";
+    public static final int DEFAULT_PAGE = 1;
+    public static final int DEFAULT_LIMIT = 20;
 
     public static interface MenuType {
         //M目录 C菜单 F按钮

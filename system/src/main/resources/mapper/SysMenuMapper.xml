@@ -42,7 +42,7 @@
         INNER JOIN sys_menu AS m ON m.menu_id = rm.menu_id
         WHERE
         ur.user_id = #{userId}
-        AND m.`status` = 0
+        AND m.`status` = 1
         AND m.perms != ''
     </select>
     <select id="getMenuIdsByUserId" resultType="java.lang.Long" parameterType="java.lang.Long">

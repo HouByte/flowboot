@@ -1,7 +1,9 @@
 <template>
+  <!--      background-color="#545c64"-->
   <el-menu
       :default-active="this.$store.state.menus.editableTabsValue"
       class="el-menu-vertical"
+
       background-color="#545c64"
       text-color="#fff"
       active-text-color="#ffd04b"

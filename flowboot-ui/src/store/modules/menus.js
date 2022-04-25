@@ -5,7 +5,6 @@ Vue.use(Vuex)
 
 export default {
     state: {
-
         menuList: [],
         permList: [],
 
@@ -26,6 +25,10 @@ export default {
         },
 
         addTab(state, tab) {
+            if (tab.name.indexOf("/fly/my/") !== -1){
+                tab.name="/fly/my/info";
+                tab.title = "个人中心"
+            }
             let index = state.editableTabs.findIndex(e => e.name === tab.name)
             console.log(index)
             if (index === -1) {

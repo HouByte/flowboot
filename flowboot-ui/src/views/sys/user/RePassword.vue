@@ -22,6 +22,7 @@
 
 <script>
 import {updatePass} from "@/api/user"
+
 export default {
   name: "RePassword",
   data() {

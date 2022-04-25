@@ -38,12 +38,22 @@ public class TokenServiceImpl implements TokenService {
     private final JwtProperties jwtProperties;
     private final RedisCache redisCache;
 
+    /**
+     * 检查是否排除
+     * @param request
+     * @return
+     */
     @Override
     public boolean checkIgnore(HttpServletRequest request) {
         List<String> ignores = Arrays.asList(jwtProperties.getIgnoreFilter());
         return ignores.contains(request.getServletPath());
     }
 
+    /**
+     * 得到登入用户信息
+     * @param request
+     * @return
+     */
     @Override
     public LoginUser getUser(HttpServletRequest request) {
 
@@ -85,11 +95,27 @@ public class TokenServiceImpl implements TokenService {
         claims.put(Constants.LOGIN_USER_KEY, token);
         //缓存存储
         redisCache.setCacheObject(getTokenKey(token),user);
+        //缓存存储
+        redisCache.setCacheObject(getIDKey(String.valueOf(((LoginUser)user).getUserId())),user);
         return jwtUtil.createAccessToken(claims);
     }
 
 
+    /**
+     * token redis key
+     * @param uuid
+     * @return
+     */
     private String getTokenKey(String uuid) {
         return Constants.LOGIN_TOKEN_KEY + uuid;
+    }
+
+    /**
+     * 用户信息 resid key
+     * @param id
+     * @return
+     */
+    private String getIDKey(String id) {
+        return Constants.LOGIN_ID_KEY + id;
     }
 }

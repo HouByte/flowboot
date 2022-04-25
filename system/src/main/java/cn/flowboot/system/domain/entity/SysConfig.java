@@ -37,9 +37,9 @@ public class SysConfig extends BaseEntity implements Serializable {
     private String configValue;
 
     /**
-     * 系统内置（Y是 N否）
+     * 是否系统内置
      */
-    private Boolean builtIn;
+    private Boolean configType;
 
     /**
      * 创建者

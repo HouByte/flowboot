@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.util.List;
@@ -38,7 +39,7 @@ public class MenuDto implements Serializable {
     /**
      * 显示顺序
      */
-    @NotBlank(message = "排序值不能为空")
+    @NotNull(message = "排序值不能为空")
     private Integer orderNum;
 
     /**

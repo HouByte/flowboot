@@ -14,6 +14,7 @@ import cn.flowboot.system.service.SysRoleService;
 import com.github.pagehelper.PageHelper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -36,6 +37,12 @@ public class SysRoleController extends BaseController {
 
     private final SysRoleService sysRoleService;
 
+    /**
+     * 管理列表
+     * @param roleQuery
+     * @return
+     */
+    @PreAuthorize("@auth.hasPermi('sys:role:list')")
     @GetMapping("list")
     public AjaxResult list(RoleQuery roleQuery){
         PageHelper.startPage(roleQuery.getPage(),roleQuery.getLimit());
@@ -44,6 +51,12 @@ public class SysRoleController extends BaseController {
         return page(sysRoles, RoleVo.class);
     }
 
+    /**
+     * 查询单个信息
+     * @param id
+     * @return
+     */
+    @PreAuthorize("@auth.hasPermi('sys:role:query')")
     @GetMapping("info/{id}")
     public AjaxResult info(@PathVariable("id")Long id){
         SysRole sysRole = sysRoleService.getById(id);
@@ -57,6 +70,7 @@ public class SysRoleController extends BaseController {
      * @param roleDto
      * @return
      */
+    @PreAuthorize("@auth.hasPermi('sys:role:save')")
     @PostMapping("save")
     public AjaxResult save(@Valid @RequestBody RoleDto roleDto){
         AssertUtil.isTrue(roleDto.getRoleId() != null,"系统错误");
@@ -64,6 +78,12 @@ public class SysRoleController extends BaseController {
         return success();
     }
 
+    /**
+     * 更新
+     * @param roleDto
+     * @return
+     */
+    @PreAuthorize("@auth.hasPermi('sys:role:update')")
     @PostMapping("update")
     public AjaxResult update(@Valid @RequestBody RoleDto roleDto){
         AssertUtil.isTrue(roleDto.getRoleId() == null,"更新数据不存在");
@@ -71,6 +91,12 @@ public class SysRoleController extends BaseController {
         return success();
     }
 
+    /**
+     * 删除
+     * @param baseDelete
+     * @return
+     */
+    @PreAuthorize("@auth.hasPermi('sys:role:delete')")
     @PostMapping("delete")
     public AjaxResult delete(@Valid @RequestBody BaseDelete baseDelete){
         AssertUtil.isTrue(baseDelete == null || baseDelete.getIds() == null || baseDelete.getIds().size() == 0,"请选择删除数据");
@@ -86,6 +112,7 @@ public class SysRoleController extends BaseController {
         return success(sysRoles);
     }
 
+    @PreAuthorize("@auth.hasPermi('sys:role:status')")
     @PostMapping("update/status/{id}")
     public AjaxResult updateStatus(@PathVariable("id")Long id,Boolean status){
         AssertUtil.isTrue(status == null,"系统异常");

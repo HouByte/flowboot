@@ -62,6 +62,21 @@ public class MenuNavVo implements Serializable {
      */
     private String icon;
 
+    /**
+     * 菜单类型（M目录 C菜单 F按钮）
+     */
+    private String menuType;
+
+    /**
+     * 菜单状态（1显示 0隐藏）
+     */
+    private Boolean visible;
+
+    /**
+     * 显示顺序
+     */
+    private Integer orderNum;
+
     private List<MenuNavVo> children = new ArrayList<>();
 
 
