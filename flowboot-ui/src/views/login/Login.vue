@@ -2,7 +2,7 @@
   <div :class="'container ' + (isRegister?'sign-up-mode':'') ">
     <div class="form-warp">
       <form class="sign-in-form">
-        <h1 class="form-title">飞行大数据</h1>
+        <h1 class="form-title">快流程 · 快速开发轻量级框架</h1>
         <h2 class="form-title">登录</h2>
         <el-form :model="loginForm" status-icon :rules="rules" ref="form" class="login-form">
           <el-form-item prop="username" style="width: 100%">
@@ -25,7 +25,7 @@
         <div class="submit-btn" @click="submitForm('form')">立即登录</div>
       </form>
       <form class="sign-up-form">
-        <h1 class="form-title">飞行大数据</h1>
+        <h1 class="form-title">快流程 · 快速开发轻量级框架</h1>
         <h2 class="form-title">注册</h2>
         <el-form :model="registerForm" status-icon :rules="rules" ref="registerForm" class="login-form">
           <el-form-item prop="username" style="width: 100%">

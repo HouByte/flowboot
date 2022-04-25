@@ -19,8 +19,6 @@
         <module>core</module>
         <module>boot</module>
         <module>system</module>
-        <module>quartz</module>
-        <module>flowable</module>
         <module>generator</module>
     </modules>
 
@@ -74,18 +72,6 @@
             <dependency>
                 <groupId>cn.flowboot</groupId>
                 <artifactId>generator</artifactId>
-                <version>${flowboot.version}</version>
-            </dependency>
-            <!-- 定时任务模块 -->
-            <dependency>
-                <groupId>cn.flowboot</groupId>
-                <artifactId>quartz</artifactId>
-                <version>${flowboot.version}</version>
-            </dependency>
-            <!-- 工作流模块 -->
-            <dependency>
-                <groupId>cn.flowboot</groupId>
-                <artifactId>flowable</artifactId>
                 <version>${flowboot.version}</version>
             </dependency>
 
